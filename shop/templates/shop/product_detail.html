@@ -1,0 +1,371 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+
+
+
+
+
+
+{% block title %}{{ product.title }} - Kinoush Store{% endblock %}
+
+{% block meta_description %}
+  {{ product.short_description|default:product.description|default:"Produit de Kinoush Store"|truncatechars:160 }}
+{% endblock %}
+
+{% block og_title %}{{ product.title }} - Kinoush Store{% endblock %}
+{% block twitter_title %}{{ product.title }} - Kinoush Store{% endblock %}
+{% block og_description %}
+  {{ product.short_description|default:product.description|default:"Produit de Kinoush Store"|truncatechars:160 }}
+{% endblock %}
+{% block twitter_description %}
+  {{ product.short_description|default:product.description|default:"Produit de Kinoush Store"|truncatechars:160 }}
+{% endblock %}
+
+{% block og_type %}product{% endblock %}
+
+{% block canonical_url %}{{ request.scheme }}://{{ request.get_host }}{% url 'shop:product_detail' product.slug %}{% endblock %}
+
+{% block og_image %}
+  {% if product.image %}
+    {{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}
+  {% else %}
+    {{ request.scheme }}://{{ request.get_host }}{% static 'img/og-default.svg' %}
+  {% endif %}
+{% endblock %}
+
+{% block twitter_image %}
+  {% if product.image %}
+    {{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}
+  {% else %}
+    {{ request.scheme }}://{{ request.get_host }}{% static 'img/og-default.svg' %}
+  {% endif %}
+{% endblock %}
+
+{% block extra_head %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "{{ product.title|escapejs }}",
+    {% if product.image %}
+    "image": ["{{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}"],
+    {% else %}
+    "image": ["{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-default.svg' %}"],
+    {% endif %}
+    "description": "{{ product.short_description|default:product.description|default:"Produit de Kinoush Store"|truncatechars:160|escapejs }}",
+    "sku": "KNS-{{ product.id }}",
+    "brand": { "@type": "Brand", "name": "Kinoush Store" },
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "CAD",
+      "price": "{{ product.price }}",
+      "availability": "https://schema.org/{% if product.stock > 0 %}InStock{% else %}OutOfStock{% endif %}",
+      "url": "{{ request.build_absolute_uri }}"
+    }
+  }
+  </script>
+{% endblock %}
+
+
+
+
+
+
+
+{% block content %}
+
+
+
+
+
+
+
+<div class="container py-5">
+
+
+
+
+
+
+
+      <a href="javascript:history.back()" class="btn btn-outline-dark mb-4">← Retour</a>
+
+
+
+
+
+
+
+  <div class="row">
+
+
+
+
+
+
+
+    <div class="col-md-6 mb-4">
+
+
+
+
+
+
+
+      {% if product.image %}
+
+
+
+
+
+
+
+        <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.title }}">
+
+
+
+
+
+
+
+      {% else %}
+
+
+
+
+
+
+
+        <div class="bg-secondary" style="height:400px;"></div>
+
+
+
+
+
+
+
+      {% endif %}
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+    <div class="col-md-6">
+
+
+
+
+
+
+
+      <h1 class="h3 mb-3">{{ product.title }}</h1>
+
+
+
+
+
+
+
+      <p class="h4 mb-3">{{ product.price }} $</p>
+
+
+
+
+
+
+
+      {% if product.short_description %}
+
+
+
+
+
+
+
+        <p>{{ product.short_description }}</p>
+
+
+
+
+
+
+
+      {% endif %}
+
+
+
+
+
+
+
+      <form method="post" action="{% url 'shop:add_to_cart' product.id %}">
+
+
+
+
+
+
+
+      {% csrf_token %}
+
+
+
+
+
+
+
+      <input type="hidden" name="next" value="{{ request.path }}">
+
+
+
+
+
+
+
+      <div class="mb-3">
+
+
+
+
+
+
+
+        <label for="qty" class="form-label">Quantité</label>
+
+
+
+
+
+
+
+        <input id="qty" type="number" name="quantity" value="1" min="1" class="form-control w-auto">
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+      <button type="submit" class="btn btn-primary btn-lg">
+
+
+
+
+
+
+
+        Ajouter au panier
+
+
+
+
+
+
+
+      </button>
+
+
+
+
+
+
+
+    </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <hr>
+
+
+
+
+
+
+
+    <h5>Description</h5>
+
+
+
+
+
+
+
+    <p>{{ product.description }}</p>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

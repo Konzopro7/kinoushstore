@@ -1,0 +1,398 @@
+{% extends "core/base.html" %}
+
+
+
+
+
+
+
+{% load static %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% block title %}Accueil - Kinoush Store{% endblock %}
+{% block meta_description %}Boutique en ligne Kinoush Store : parfums, habits et accessoires. Decouvrez nos nouveautes et collections du moment.{% endblock %}
+{% block og_title %}Accueil - Kinoush Store{% endblock %}
+{% block twitter_title %}Accueil - Kinoush Store{% endblock %}
+{% block og_description %}Boutique en ligne Kinoush Store : parfums, habits et accessoires. Decouvrez nos nouveautes et collections du moment.{% endblock %}
+{% block twitter_description %}Boutique en ligne Kinoush Store : parfums, habits et accessoires. Decouvrez nos nouveautes et collections du moment.{% endblock %}
+{% block canonical_url %}{{ request.scheme }}://{{ request.get_host }}{% url 'shop:home' %}{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% block content %}
+
+
+
+
+
+
+
+<!-- HERO -->
+
+
+
+
+
+
+
+<section class="py-5 bg-light">
+
+
+
+
+
+
+
+  <div class="container">
+
+
+
+
+
+
+
+    <div class="row align-items-center">
+
+
+
+
+
+
+
+      <div class="col-md-6">
+
+
+
+
+
+
+
+        <p class="text-uppercase small text-muted mb-2">Nouvelle sélection</p>
+
+
+
+
+
+
+
+        <h1 class="display-5 fw-bold mb-3">Parfums, habits & accessoires élégants.</h1>
+
+
+
+
+
+
+
+        <p class="mb-4">Un e-commerce moderne pour votre style au quotidien.</p>
+
+
+
+
+
+
+
+        <a href="{% url 'shop:product_list' %}" class="btn btn-dark btn-lg">Voir la boutique</a>
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+      <div class="col-md-6">
+
+
+
+
+
+
+
+        <!-- tu peux mettre une image statique ici -->
+
+
+
+
+
+
+
+        <img src="{% static 'img/hero.jpg' %}" class="img-fluid rounded" alt="Boutique">
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- SECTIONS HOMMES / FEMMES -->
+
+
+
+
+
+
+
+<section class="py-5">
+
+
+
+
+
+
+
+  <div class="container">
+
+
+
+
+
+
+
+    <h2 class="h4 mb-4">Catégories</h2>
+
+
+
+
+
+
+
+    <div class="row g-4">
+
+
+
+
+
+
+
+      <div class="col-6">
+
+
+
+
+
+
+
+        <a href="{% url 'shop:product_list_men' %}" class="gender-tile">
+
+
+
+
+
+
+
+          <img src="{% static 'img/hommes.jpg' %}" alt="Hommes">
+
+
+
+
+
+
+
+          <span class="gender-label">Hommes</span>
+
+
+
+
+
+
+
+        </a>
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+      <div class="col-6">
+
+
+
+
+
+
+
+        <a href="{% url 'shop:product_list_women' %}" class="gender-tile">
+
+
+
+
+
+
+
+          <img src="{% static 'img/femmes.jpg' %}" alt="Femmes">
+
+
+
+
+
+
+
+          <span class="gender-label">Femmes</span>
+
+
+
+
+
+
+
+        </a>
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,504 @@
+{% extends "core/base.html" %}
+
+
+
+
+
+
+
+{% block title %}Mon compte - Kinoush Store{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% block content %}
+
+
+
+
+
+
+
+<div class="container py-5" style="max-width: 600px;">
+
+
+
+
+
+
+
+  <h1 class="h3 mb-4">Mon compte</h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="card mb-4">
+
+
+
+
+
+
+
+    <div class="card-body">
+
+
+
+
+
+
+
+      <p><strong>Nom d'utilisateur :</strong> {{ request.user.username }}</p>
+
+
+
+
+
+
+
+      <p><strong>Nom :</strong> {{ request.user.first_name }} {{ request.user.last_name }}</p>
+
+
+
+
+
+
+
+      <p><strong>Email :</strong> {{ request.user.email|default:"(non renseigné)" }}</p>
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a href="{% url 'account_edit' %}" class="btn btn-outline-primary me-2">
+
+
+
+
+
+
+
+    Modifier mes informations
+
+
+
+
+
+
+
+  </a>
+
+
+
+
+
+
+
+  <a href="{% url 'password_change' %}" class="btn btn-outline-secondary me-2">
+
+
+
+
+
+
+
+    Changer mon mot de passe
+
+
+
+
+
+
+
+  </a>
+
+
+
+
+
+
+
+  <a href="{% url 'logout' %}" class="btn btn-outline-danger">
+
+
+
+
+
+
+
+    Se déconnecter
+
+
+
+
+
+
+
+  </a>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="h5 mt-5 mb-3">Mes commandes</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% if orders %}
+
+
+
+
+
+
+
+  <div class="table-responsive">
+
+
+
+
+
+
+
+    <table class="table align-middle">
+
+
+
+
+
+
+
+      <thead>
+
+
+
+
+
+
+
+        <tr>
+
+
+
+
+
+
+
+          <th>#</th>
+
+
+
+
+
+
+
+          <th>Date</th>
+
+
+
+
+
+
+
+          <th>Montant</th>
+
+
+
+
+
+
+
+          <th>Statut</th>
+
+
+
+
+
+
+
+        </tr>
+
+
+
+
+
+
+
+      </thead>
+
+
+
+
+
+
+
+      <tbody>
+
+
+
+
+
+
+
+        {% for order in orders %}
+
+
+
+
+
+
+
+          <tr>
+
+
+
+
+
+
+
+            <td>{{ order.reference }}</td>
+
+
+
+
+
+
+
+            <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+
+
+
+
+
+
+
+            <td>{{ order.total }} $</td>
+
+
+
+
+
+
+
+            <td>
+
+
+
+
+
+
+
+              {% if order.paid %}
+
+
+
+
+
+
+
+                <span class="badge bg-success">Payée</span>
+
+
+
+
+
+
+
+              {% else %}
+
+
+
+
+
+
+
+                <span class="badge bg-secondary">En attente</span>
+
+
+
+
+
+
+
+              {% endif %}
+
+
+
+
+
+
+
+            </td>
+
+
+
+
+
+
+
+          </tr>
+
+
+
+
+
+
+
+        {% endfor %}
+
+
+
+
+
+
+
+      </tbody>
+
+
+
+
+
+
+
+    </table>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+{% else %}
+
+
+
+
+
+
+
+  <p>Vous n'avez pas encore passé de commande.</p>
+
+
+
+
+
+
+
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

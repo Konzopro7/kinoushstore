@@ -1,0 +1,82 @@
+{% extends "core/base.html" %}
+
+{% block title %}SEO Checklist - Kinoush Store{% endblock %}
+{% block meta_description %}Checklist SEO pour Kinoush Store : indexation, sitemap, robots, performance et schema.org.{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <h1 class="display-6 fw-bold mb-3">SEO Checklist (production)</h1>
+    <p class="text-muted mb-4">
+      Utilise cette page pour valider rapidement le referencement apres mise en ligne.
+    </p>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="p-4 border rounded-3 h-100">
+          <h2 class="h5">Indexation et sitemaps</h2>
+          <ul class="mb-0">
+            <li>Verifier https://kinoushstore.com/sitemap.xml</li>
+            <li>Verifier https://kinoushstore.com/robots.txt</li>
+            <li>Soumettre le sitemap dans Google Search Console</li>
+            <li>Lancer une demande d'indexation pour la page d'accueil</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="p-4 border rounded-3 h-100">
+          <h2 class="h5">Meta et partage social</h2>
+          <ul class="mb-0">
+            <li>Verifier les balises title/description par page</li>
+            <li>Verifier OG/Twitter avec l'outil de debug Facebook/X</li>
+            <li>Valider l'image OG (1200x630)</li>
+            <li>Verifier les pages noindex (panier, paiement)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="p-4 border rounded-3 h-100">
+          <h2 class="h5">Performance</h2>
+          <ul class="mb-0">
+            <li>Tester PageSpeed (mobile + desktop)</li>
+            <li>Compresser les images produits (WebP si possible)</li>
+            <li>Activer la mise en cache CDN</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="p-4 border rounded-3 h-100">
+          <h2 class="h5">Données structurees</h2>
+          <ul class="mb-0">
+            <li>Schema.org Organization et WebSite (OK)</li>
+            <li>Schema.org Product sur chaque fiche produit</li>
+            <li>Verifier via Rich Results Test</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <h2 class="h5">Google Search Console</h2>
+      <ol>
+        <li>Creer la propriete de domaine kinoushstore.com</li>
+        <li>Verifier via DNS (enregistrement TXT)</li>
+        <li>Soumettre le sitemap</li>
+      </ol>
+    </div>
+
+    <div class="mt-4">
+      <h2 class="h5">IndexNow (Bing + partenaires)</h2>
+      <ol>
+        <li>Generer une cle IndexNow (chaine aleatoire)</li>
+        <li>Placer le fichier de cle a la racine: https://kinoushstore.com/{cle}.txt</li>
+        <li>Soumettre l'URL dans Bing Webmaster Tools</li>
+      </ol>
+    </div>
+  </div>
+</section>
+{% endblock %}

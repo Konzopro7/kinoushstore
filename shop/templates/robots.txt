@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /panier/
+Disallow: /commande/
+Disallow: /paiement/
+Disallow: /newsletter/
+Disallow: /stripe/
+Disallow: /suivi-commande/
+
+Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml

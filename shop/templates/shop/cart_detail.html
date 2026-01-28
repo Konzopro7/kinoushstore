@@ -1,0 +1,479 @@
+{% extends "core/base.html" %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% block title %}Mon panier - Kinoush Store{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% block content %}
+
+
+
+
+
+
+
+<div class="container py-5">
+
+
+
+
+
+
+
+  <h1 class="h3 mb-4">Mon panier</h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  {% if items %}
+
+
+
+
+
+
+
+    <table class="table align-middle">
+
+
+
+
+
+
+
+      <thead>
+
+
+
+
+
+
+
+        <tr>
+
+
+
+
+
+
+
+          <th>Produit</th>
+
+
+
+
+
+
+
+          <th>Quantité</th>
+
+
+
+
+
+
+
+          <th>Prix</th>
+
+
+
+
+
+
+
+          <th>Total</th>
+
+
+
+
+
+
+
+          <th></th>
+
+
+
+
+
+
+
+        </tr>
+
+
+
+
+
+
+
+      </thead>
+
+
+
+
+
+
+
+      <tbody>
+
+
+
+
+
+
+
+        {% for item in items %}
+
+
+
+
+
+
+
+          <tr>
+
+
+
+
+
+
+
+            <td>
+
+
+
+
+
+
+
+              {% if item.image %}
+
+
+
+
+
+
+
+                <img src="{{ item.image }}" alt="" style="height:50px; width:auto;" class="me-2">
+
+
+
+
+
+
+
+              {% endif %}
+
+
+
+
+
+
+
+              {{ item.title }}
+
+
+
+
+
+
+
+            </td>
+
+
+
+
+
+
+
+            <td>{{ item.quantity }}</td>
+
+
+
+
+
+
+
+            <td>{{ item.price }} $</td>
+
+
+
+
+
+
+
+            <td>{{ item.line_total }} $</td>
+
+
+
+
+
+
+
+            <td>
+
+
+
+
+
+
+
+              <form method="post" action="{% url 'shop:remove_from_cart' item.product_id %}">
+
+
+
+
+
+                {% csrf_token %}
+
+
+
+
+
+                <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+
+
+
+
+
+              </form>
+
+
+
+
+
+            </td>
+
+
+
+
+
+          </tr>
+
+
+
+
+
+
+
+        {% endfor %}
+
+
+
+
+
+
+
+      </tbody>
+
+
+
+
+
+
+
+    </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="text-end">
+
+
+
+
+
+
+
+  <h4>Total : {{ total }} $</h4>
+
+
+
+
+
+
+
+        <div class="d-flex gap-2 justify-content-end mt-3">
+
+
+
+
+
+
+
+ <a href="{% url 'shop:checkout' %}" class="btn btn-dark">Commander</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<!--
+
+
+
+
+
+
+
+  <a href="{% url 'shop:checkout' %}" class="btn btn-dark mt-3">
+
+
+
+
+
+
+
+    Procéder à la commande
+
+
+
+
+
+
+
+  </a> -->
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  {% else %}
+
+
+
+
+
+
+
+    <p>Votre panier est vide pour le moment.</p>
+
+
+
+
+
+
+
+  {% endif %}
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

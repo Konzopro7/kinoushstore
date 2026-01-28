@@ -1,0 +1,1297 @@
+{% extends "core/base.html" %}
+
+
+
+
+
+
+
+{% block title %}Paiement - Kinoush Store{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% block extra_head %}
+
+
+
+
+
+
+
+<script src="https://js.stripe.com/v3/"></script>
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% block content %}
+
+
+
+
+
+
+
+<div class="container py-5" style="max-width: 920px;">
+
+
+
+
+
+
+
+  <div class="row g-4">
+
+
+
+
+
+
+
+    <!-- Résumé -->
+
+
+
+
+
+
+
+    <div class="col-lg-5">
+
+
+
+
+
+
+
+      <div class="card shadow-sm border-0 p-4">
+
+
+
+
+
+
+
+        <h2 class="h5 mb-1">Résumé de la commande</h2>
+
+
+
+
+
+
+
+        <p class="text-muted small mb-3">Référence : <strong>{{order.reference }}</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="border-top pt-3">
+
+
+
+
+
+
+
+          {% for it in items %}
+
+
+
+
+
+
+
+            <div class="d-flex justify-content-between small mb-2">
+
+
+
+
+
+
+
+              <div>
+
+
+
+
+
+
+
+                <div class="fw-semibold">{{ it.title }}</div>
+
+
+
+
+
+
+
+                <div class="text-muted">Qté: {{ it.quantity }}</div>
+
+
+
+
+
+
+
+              </div>
+
+
+
+
+
+
+
+              <div class="text-end">
+
+
+
+
+
+
+
+                <div>{{ it.line_total|floatformat:2 }} $</div>
+
+
+
+
+
+
+
+              </div>
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+          {% endfor %}
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="border-top pt-3 d-flex justify-content-between align-items-center">
+
+
+
+
+
+
+
+          <span class="fw-semibold">Total</span>
+
+
+
+
+
+
+
+          <span class="h5 mb-0">{{ total|floatformat:2 }} $ CAD</span>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="small text-muted mt-3">
+
+
+
+
+
+
+
+          Paiement sécurisé via Stripe (Visa / Mastercard).
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Paiement -->
+
+
+
+
+
+
+
+    <div class="col-lg-7">
+
+
+
+
+
+
+
+      <div class="card shadow-sm border-0 p-4">
+
+
+
+
+
+
+
+        <h1 class="h5 mb-1">Paiement sécurisé</h1>
+
+
+
+
+
+
+
+        <p class="text-muted small mb-4">Finalisez votre paiement.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <form id="payment-form">
+
+
+
+
+
+
+
+          {% csrf_token %}
+
+
+
+
+
+
+
+          <div id="payment-element" class="mb-3"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <button id="payBtn" type="button" class="btn btn-dark w-100">
+
+
+
+
+
+
+
+  Payer maintenant
+
+
+
+
+
+
+
+    </button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <div id="error-message" class="text-danger small mt-2"></div>
+
+
+
+
+
+
+
+        </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <a href="{% url 'shop:checkout' %}" class="btn btn-outline-secondary w-100 mt-3">
+
+
+
+
+
+
+
+          Retour
+
+
+
+
+
+
+
+        </a>
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+
+
+
+
+
+
+  const stripe = Stripe("{{ stripe_publishable_key }}");
+
+
+
+
+
+
+
+  let elements; // accessible au clic
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  function getCookie(name) {
+
+
+
+
+
+
+
+    let cookieValue = null;
+
+
+
+
+
+
+
+    if (document.cookie && document.cookie !== "") {
+
+
+
+
+
+
+
+      const cookies = document.cookie.split(";");
+
+
+
+
+
+
+
+      for (let cookie of cookies) {
+
+
+
+
+
+
+
+        cookie = cookie.trim();
+
+
+
+
+
+
+
+        if (cookie.startsWith(name + "=")) {
+
+
+
+
+
+
+
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+
+
+
+
+
+
+
+          break;
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+    return cookieValue;
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  async function initStripe() {
+
+
+
+
+
+
+
+    const csrftoken = getCookie("csrftoken");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const url = "{% url 'shop:create_payment_intent' order.reference %}";
+
+
+
+
+
+
+
+    console.log("Intent URL:", url);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const res = await fetch(url, {
+
+
+
+
+
+
+
+      method: "POST",
+
+
+
+
+
+
+
+      headers: {
+
+
+
+
+
+
+
+        "Content-Type": "application/json",
+
+
+
+
+
+
+
+        "X-CSRFToken": csrftoken,
+
+
+
+
+
+
+
+      },
+
+
+
+
+
+
+
+      credentials: "same-origin",   // ? IMPORTANT
+
+
+
+
+
+
+
+      body: JSON.stringify({}),
+
+
+
+
+
+
+
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    console.log("Intent status:", res.status);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (!res.ok) {
+
+
+
+
+
+
+
+      const txt = await res.text().catch(() => "");
+
+
+
+
+
+
+
+      console.error("Intent error body:", txt);
+
+
+
+
+
+
+
+      document.getElementById("error-message").textContent =
+
+
+
+
+
+
+
+        "Erreur intent (POST). Vérifie terminal Django + console (F12).";
+
+
+
+
+
+
+
+      return;
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const data = await res.json();
+
+
+
+
+
+
+
+    if (!data.clientSecret) {
+
+
+
+
+
+
+
+      document.getElementById("error-message").textContent =
+
+
+
+
+
+
+
+        "clientSecret manquant. Vérifie la vue create_payment_intent.";
+
+
+
+
+
+
+
+      return;
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    elements = stripe.elements({ clientSecret: data.clientSecret });
+
+
+
+
+
+
+
+    const paymentElement = elements.create("payment");
+
+
+
+
+
+
+
+    paymentElement.mount("#payment-element");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    console.log("? Payment Element monté");
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  document.addEventListener("DOMContentLoaded", async () => {
+
+
+
+
+
+
+
+    await initStripe();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const payBtn = document.getElementById("payBtn");
+
+
+
+
+
+
+
+    payBtn.addEventListener("click", async () => {
+
+
+
+
+
+
+
+      document.getElementById("error-message").textContent = "";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      if (!elements) {
+
+
+
+
+
+
+
+        document.getElementById("error-message").textContent =
+
+
+
+
+
+
+
+          "Stripe n'est pas prêt. Recharge la page.";
+
+
+
+
+
+
+
+        return;
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      payBtn.disabled = true;
+
+
+
+
+
+
+
+      payBtn.textContent = "Paiement en cours...";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      const { error } = await stripe.confirmPayment({
+
+
+
+
+
+
+
+        elements,
+
+
+
+
+
+
+
+        confirmParams: {
+
+
+
+
+
+
+
+          return_url: "{{ request.scheme }}://{{ request.get_host }}{% url 'shop:payment_success' %}",
+
+
+
+
+
+
+
+        },
+
+
+
+
+
+
+
+      });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      if (error) {
+
+
+
+
+
+
+
+        document.getElementById("error-message").textContent = error.message;
+
+
+
+
+
+
+
+        payBtn.disabled = false;
+
+
+
+
+
+
+
+        payBtn.textContent = "Payer maintenant";
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+    });
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

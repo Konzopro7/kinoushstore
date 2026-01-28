@@ -1,0 +1,585 @@
+{% load static %}
+
+
+
+<!DOCTYPE html>
+
+
+
+<html lang="fr">
+
+
+
+<head>
+
+
+
+  <meta charset="UTF-8">
+
+
+
+  <title>{% block title %}Kinoush Store - Parfums, Habits & Accessoires{% endblock %}</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <meta name="description" content="{% block meta_description %}Kinoush Store, boutique en ligne de parfums, habits et accessoires. Decouvrez nos nouveautes et best-sellers.{% endblock %}">
+  <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
+  <link rel="canonical" href="{% block canonical_url %}{{ request.scheme }}://{{ request.get_host }}{{ request.path }}{% endblock %}">
+
+  <meta property="og:site_name" content="Kinoush Store">
+  <meta property="og:locale" content="fr_CA">
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}Kinoush Store - Parfums, Habits & Accessoires{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Kinoush Store, boutique en ligne de parfums, habits et accessoires. Decouvrez nos nouveautes et best-sellers.{% endblock %}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-default.svg' %}{% endblock %}">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}Kinoush Store - Parfums, Habits & Accessoires{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}Kinoush Store, boutique en ligne de parfums, habits et accessoires. Decouvrez nos nouveautes et best-sellers.{% endblock %}">
+  <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-default.svg' %}{% endblock %}">
+
+
+
+
+
+
+
+
+
+
+
+  <!-- Bootstrap -->
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+
+
+
+
+
+
+  <!-- Police + Favicon + CSS -->
+
+
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+
+
+  <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}">
+
+
+
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+
+
+
+
+
+  {% block extra_head %}{% endblock %}
+
+  {% with base_url=request.scheme|add:"://"|add:request.get_host %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Kinoush Store",
+    "url": "{{ base_url }}",
+    "logo": "{{ base_url }}{% static 'img/logo.png' %}"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Kinoush Store",
+    "url": "{{ base_url }}"
+  }
+  </script>
+  {% endwith %}
+
+
+
+</head>
+
+
+<body>
+
+
+<div class="container mt-3">
+
+
+  {% if messages %}
+
+
+    {% for message in messages %}
+
+
+      <div class="alert alert-{{ message.tags }} mb-2" role="alert">
+
+
+        {{ message }}
+
+
+      </div>
+
+
+    {% endfor %}
+
+
+  {% endif %}
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+<header class="border-bottom bg-white">
+
+
+
+  <div class="container py-3 d-flex align-items-center justify-content-between">
+
+
+
+
+
+
+
+    <!-- LOGO + TEXTE -->
+
+
+
+    <a href="{% url 'shop:home' %}" class="navbar-brand d-flex align-items-center">
+
+
+
+      <img src="{% static 'img/logo.png' %}" alt="Kinoush Store" class="logo-small me-2" style="height:40px; width:auto;">
+
+
+
+      <span class="brand-text">KINOUSH STORE</span>
+
+
+
+    </a>
+
+
+
+
+
+
+
+    <!-- MENU -->
+
+
+
+   <nav class="d-flex gap-3">
+
+
+
+  <a href="{% url 'shop:home' %}" class="text-dark">Accueil</a>
+
+
+
+  <a href="{% url 'shop:product_list' %}" class="text-dark">Boutique</a>
+
+
+
+  <a href="{% url 'shop:about' %}" class="text-dark">À propos</a>
+
+
+  <a href="{% url 'shop:faq' %}" class="text-dark">FAQ</a>
+
+
+
+  <a href="{% url 'shop:contact' %}" class="text-dark">Contact</a>
+
+
+
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+ <!-- IC?NES -->
+
+
+<div class="d-flex gap-3 align-items-center icon-bar">
+
+
+
+
+
+
+
+  <!-- Recherche -->
+
+
+
+  <a href="{% url 'shop:product_list' %}?search=" class="header-icon" title="Rechercher">
+
+
+
+    <img src="{% static 'icons/search.png' %}" alt="Rechercher">
+
+
+
+  </a>
+
+
+
+
+
+
+
+  <!-- Suivi commande (remplace Compte) -->
+
+
+
+<a href="{% url 'shop:order_tracking' %}" class="header-icon" title="Suivi commande">
+
+
+
+  <img src="{% static 'icons/user.png' %}" alt="Suivi commande">
+
+
+
+</a>
+
+
+
+
+
+
+
+
+
+
+
+<!-- Panier -->
+
+
+
+<a href="{% url 'shop:cart_detail' %}" class="header-icon position-relative" title="Panier">
+
+
+
+  <img src="{% static 'icons/cart.png' %}" alt="Panier">
+
+
+
+
+
+
+
+  {% if cart_item_count %}
+
+
+
+    <span class="cart-badge">{{ cart_item_count }}</span>
+
+
+
+  {% endif %}
+
+
+
+</a>
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>  <!-- ðŸ”¹ fermeture du .container -->
+
+
+</header>
+
+
+
+
+
+
+
+<main>
+
+
+
+  {% block content %}{% endblock %}
+
+
+
+</main>
+
+
+
+
+
+
+
+<footer class="bg-dark text-white mt-5 py-4">
+
+
+
+  <div class="container text-center">
+
+
+
+
+
+
+
+    <!-- R?seaux sociaux -->
+
+
+    <div class="d-flex justify-content-center gap-3 mb-3">
+
+
+
+      <!-- TikTok -->
+
+
+
+      <a href="https://www.tiktok.com/@niki4five?_r=1&_t=ZS-91UHhMrZpVC" target="_blank" class="social-icon" aria-label="TikTok">
+
+
+
+        <img src="{% static 'icons/tiktok.png' %}" alt="TikTok">
+
+
+
+      </a>
+
+
+
+
+
+
+
+      <!-- Instagram -->
+
+
+
+      <a href="https://www.instagram.com/beckkassethiam?igsh=ZTNna2hkZ3piYWJn&utm_source=qr" target="_blank" class="social-icon" aria-label="Instagram">
+
+
+
+        <img src="{% static 'icons/instagram.png' %}" alt="Instagram">
+
+
+
+      </a>
+
+
+
+
+
+
+
+      <!-- Facebook -->
+
+
+
+      <a href="https://www.facebook.com/share/19CaR8VwqN/?mibextid=wwXIfr" target="_blank" class="social-icon" aria-label="Facebook">
+
+
+
+        <img src="{% static 'icons/facebook.png' %}" alt="Facebook">
+
+
+
+      </a>
+
+
+
+
+
+
+
+      <!-- Snapchat -->
+
+
+
+      <a href="https://snapchat.com/t/0WbpiaLX" target="_blank" class="social-icon" aria-label="Snapchat">
+
+
+
+        <img src="{% static 'icons/snapchat.png' %}" alt="Snapchat">
+
+
+
+      </a>
+
+
+
+
+
+
+
+      <!-- E-mail -->
+
+
+
+      <a href="mailto:beckhamkasse@hotmail.com" class="social-icon" aria-label="Email">
+
+
+        <img src="{% static 'icons/mail.png' %}" alt="Email">
+
+
+      </a>
+
+
+    </div>
+
+
+
+
+
+
+
+    <p class="mb-1">&copy; {% now "Y" %} Kinoush Store. Tous droits r?serv?s.</p>
+
+
+
+    <p class="small mb-0">Parfums ? Habits ? Accessoires</p>
+
+
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+  <div class="mt-3" style="max-width:520px; margin: 0 auto;">
+
+
+
+    <h6 class="mb-2">Newsletter</h6>
+
+
+
+    <form method="post" action="{% url 'shop:newsletter_subscribe' %}" class="d-flex gap-2">
+
+
+
+      {% csrf_token %}
+
+
+
+      <input type="email" name="email" class="form-control" placeholder="Votre email" required>
+
+
+
+      <button class="btn btn-light">S?inscrire</button>
+
+
+
+    </form>
+
+
+
+    <small class="text-white-50 d-block mt-2">Recevez nos nouveaut?s et promotions.</small>
+
+
+
+  </div>
+
+
+
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,105 @@
+{% extends "core/base.html" %}
+
+
+
+
+
+
+
+{% block title %}Commande confirmee - Kinoush Store{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+
+
+
+
+
+
+{% block content %}
+
+
+
+
+
+
+
+<div class="container py-5" style="max-width:720px;">
+
+
+
+
+
+
+
+  <h1 class="h4 mb-3">Merci ??</h1>
+
+
+
+
+
+
+
+  <p>Votre commande a bien été enregistrée.</p>
+
+
+
+
+
+
+
+  <div class="alert alert-success">
+
+
+
+
+
+
+
+    <strong>Référence :</strong> {{ reference }}
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+  <a href="{% url 'shop:product_list' %}" class="btn btn-dark">Retour à la boutique</a>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,531 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+
+
+
+
+
+
+{% block title %}
+  {% if current_category %}
+    {{ current_category.name }} - Kinoush Store
+  {% elif current_gender == 'homme' %}
+    Boutique Homme - Kinoush Store
+  {% elif current_gender == 'femme' %}
+    Boutique Femme - Kinoush Store
+  {% else %}
+    Boutique - Kinoush Store
+  {% endif %}
+{% endblock %}
+
+{% block meta_description %}
+  {% if current_category %}
+    Decouvrez la categorie {{ current_category.name }} : parfums, habits et accessoires chez Kinoush Store.
+  {% elif current_gender == 'homme' %}
+    Selection homme : parfums, habits et accessoires tendance sur Kinoush Store.
+  {% elif current_gender == 'femme' %}
+    Selection femme : parfums, habits et accessoires tendance sur Kinoush Store.
+  {% else %}
+    Parcourez toute la boutique Kinoush Store : parfums, habits et accessoires pour tous les styles.
+  {% endif %}
+{% endblock %}
+
+{% block og_title %}
+  {% if current_category %}
+    {{ current_category.name }} - Kinoush Store
+  {% elif current_gender == 'homme' %}
+    Boutique Homme - Kinoush Store
+  {% elif current_gender == 'femme' %}
+    Boutique Femme - Kinoush Store
+  {% else %}
+    Boutique - Kinoush Store
+  {% endif %}
+{% endblock %}
+
+{% block twitter_title %}
+  {% if current_category %}
+    {{ current_category.name }} - Kinoush Store
+  {% elif current_gender == 'homme' %}
+    Boutique Homme - Kinoush Store
+  {% elif current_gender == 'femme' %}
+    Boutique Femme - Kinoush Store
+  {% else %}
+    Boutique - Kinoush Store
+  {% endif %}
+{% endblock %}
+
+{% block og_description %}
+  {% if current_category %}
+    Decouvrez la categorie {{ current_category.name }} : parfums, habits et accessoires chez Kinoush Store.
+  {% elif current_gender == 'homme' %}
+    Selection homme : parfums, habits et accessoires tendance sur Kinoush Store.
+  {% elif current_gender == 'femme' %}
+    Selection femme : parfums, habits et accessoires tendance sur Kinoush Store.
+  {% else %}
+    Parcourez toute la boutique Kinoush Store : parfums, habits et accessoires pour tous les styles.
+  {% endif %}
+{% endblock %}
+
+{% block twitter_description %}
+  {% if current_category %}
+    Decouvrez la categorie {{ current_category.name }} : parfums, habits et accessoires chez Kinoush Store.
+  {% elif current_gender == 'homme' %}
+    Selection homme : parfums, habits et accessoires tendance sur Kinoush Store.
+  {% elif current_gender == 'femme' %}
+    Selection femme : parfums, habits et accessoires tendance sur Kinoush Store.
+  {% else %}
+    Parcourez toute la boutique Kinoush Store : parfums, habits et accessoires pour tous les styles.
+  {% endif %}
+{% endblock %}
+
+{% block og_image %}
+  {% if current_category %}
+    {{ request.scheme }}://{{ request.get_host }}{% static 'img/og-category.svg' %}
+  {% elif current_gender == 'homme' %}
+    {{ request.scheme }}://{{ request.get_host }}{% static 'img/og-men.svg' %}
+  {% elif current_gender == 'femme' %}
+    {{ request.scheme }}://{{ request.get_host }}{% static 'img/og-women.svg' %}
+  {% else %}
+    {{ request.scheme }}://{{ request.get_host }}{% static 'img/og-default.svg' %}
+  {% endif %}
+{% endblock %}
+
+{% block twitter_image %}
+  {% if current_category %}
+    {{ request.scheme }}://{{ request.get_host }}{% static 'img/og-category.svg' %}
+  {% elif current_gender == 'homme' %}
+    {{ request.scheme }}://{{ request.get_host }}{% static 'img/og-men.svg' %}
+  {% elif current_gender == 'femme' %}
+    {{ request.scheme }}://{{ request.get_host }}{% static 'img/og-women.svg' %}
+  {% else %}
+    {{ request.scheme }}://{{ request.get_host }}{% static 'img/og-default.svg' %}
+  {% endif %}
+{% endblock %}
+
+{% block canonical_url %}
+  {% if current_category %}
+    {{ request.scheme }}://{{ request.get_host }}{% url 'shop:category_detail' current_category.slug %}
+  {% elif current_gender == 'homme' %}
+    {{ request.scheme }}://{{ request.get_host }}{% url 'shop:product_list_men' %}
+  {% elif current_gender == 'femme' %}
+    {{ request.scheme }}://{{ request.get_host }}{% url 'shop:product_list_women' %}
+  {% else %}
+    {{ request.scheme }}://{{ request.get_host }}{% url 'shop:product_list' %}
+  {% endif %}
+{% endblock %}
+
+
+
+
+
+
+
+{% block content %}
+
+
+
+
+
+
+
+<div class="d-flex gap-3 mb-4">
+
+
+
+
+
+
+
+  <a href="{% url 'shop:product_list' %}" class="btn {% if not current_gender %}btn-dark{% else %}btn-outline-dark{% endif %}">Tout</a>
+
+
+
+
+
+
+
+  <a href="{% url 'shop:product_list_men' %}" class="btn {% if current_gender == 'homme' %}btn-dark{% else %}btn-outline-dark{% endif %}">Hommes</a>
+
+
+
+
+
+
+
+  <a href="{% url 'shop:product_list_women' %}" class="btn {% if current_gender == 'femme' %}btn-dark{% else %}btn-outline-dark{% endif %}">Femmes</a>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="container py-5">
+
+
+
+
+
+
+
+      <a href="javascript:history.back()" class="btn btn-outline-dark mb-4">← Retour</a>
+
+
+
+
+
+
+
+  <div class="row">
+
+
+
+
+
+
+
+    <aside class="col-md-3 mb-4">
+
+
+
+
+
+
+
+      <h2 class="h5 mb-3">Catégories</h2>
+
+
+
+
+
+
+
+      <ul class="list-unstyled">
+
+
+
+
+
+
+
+        <li><a href="{% url 'shop:product_list' %}">Tous</a></li>
+
+
+
+
+
+
+
+        {% for c in categories %}
+
+
+
+
+
+
+
+          <li>
+
+
+
+
+
+
+
+            <a href="{% url 'shop:category_detail' c.slug %}"
+
+
+
+
+
+
+
+               {% if current_category and current_category.id == c.id %}class="fw-bold"{% endif %}>
+
+
+
+
+
+
+
+              {{ c.name }}
+
+
+
+
+
+
+
+            </a>
+
+
+
+
+
+
+
+          </li>
+
+
+
+
+
+
+
+        {% endfor %}
+
+
+
+
+
+
+
+      </ul>
+
+
+
+
+
+
+
+    </aside>
+
+
+
+
+
+
+
+    <div class="col-md-9">
+
+
+
+
+
+
+
+      <div class="row g-4">
+
+
+
+
+
+
+
+        {% for product in products %}
+
+
+
+
+
+
+
+        <div class="col-6 col-md-4">
+
+
+
+
+
+
+
+          <div class="card h-100 border-0 shadow-sm">
+
+
+
+
+
+
+
+            {% if product.image %}
+
+
+
+
+
+
+
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}">
+
+
+
+
+
+
+
+            {% endif %}
+
+
+
+
+
+
+
+            <div class="card-body">
+
+
+
+
+
+
+
+              <h3 class="h6">
+
+
+
+
+
+
+
+                <a href="{% url 'shop:product_detail' product.slug %}" class="text-dark text-decoration-none">
+
+
+
+
+
+
+
+                  {{ product.title }}
+
+
+
+
+
+
+
+                </a>
+
+
+
+
+
+
+
+              </h3>
+
+
+
+
+
+
+
+              <p class="mb-1 fw-bold">{{ product.price }} $</p>
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+          </div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        {% empty %}
+
+
+
+
+
+
+
+          <p>Aucun produit trouvé.</p>
+
+
+
+
+
+
+
+        {% endfor %}
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
