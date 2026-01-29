@@ -53,6 +53,14 @@ CSRF_TRUSTED_ORIGINS = [
 
 # Application definition
 
+_CLOUDINARY_URL = os.getenv("CLOUDINARY_URL", "")
+_CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME", "")
+_CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY", "")
+_CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET", "")
+USE_CLOUDINARY = bool(
+    _CLOUDINARY_URL or (_CLOUDINARY_CLOUD_NAME and _CLOUDINARY_API_KEY and _CLOUDINARY_API_SECRET)
+)
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -61,6 +69,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.sitemaps',
     'django.contrib.staticfiles',
+    'cloudinary',
+    'cloudinary_storage',
     'shop.apps.ShopConfig',
 ]
 
@@ -151,13 +161,25 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "shop" / "static"]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 TEMPLATES[0]['DIRS'] = [os.path.join(BASE_DIR, 'shop/templates')]
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 WHITENOISE_USE_FINDERS = True
+
+if USE_CLOUDINARY:
+    if _CLOUDINARY_CLOUD_NAME and _CLOUDINARY_API_KEY and _CLOUDINARY_API_SECRET:
+        CLOUDINARY_STORAGE = {
+            "CLOUD_NAME": _CLOUDINARY_CLOUD_NAME,
+            "API_KEY": _CLOUDINARY_API_KEY,
+            "API_SECRET": _CLOUDINARY_API_SECRET,
+        }
+    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+    if _CLOUDINARY_CLOUD_NAME:
+        MEDIA_URL = f"https://res.cloudinary.com/{_CLOUDINARY_CLOUD_NAME}/"
+else:
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

@@ -7,3 +7,5 @@ dj-database-url==2.1.0
 psycopg[binary]==3.3.2
 sqlparse==0.5.3
 tzdata==2025.2
+cloudinary
+django-cloudinary-storage
