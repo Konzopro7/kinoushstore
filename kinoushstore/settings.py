@@ -149,19 +149,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "shop/static")]
+STATICFILES_DIRS = [BASE_DIR / "shop" / "static"]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 TEMPLATES[0]['DIRS'] = [os.path.join(BASE_DIR, 'shop/templates')]
 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+WHITENOISE_USE_FINDERS = True
+
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
-    WHITENOISE_USE_FINDERS = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -191,6 +192,5 @@ STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "")
 STRIPE_CURRENCY = "cad"
 SITE_URL = os.getenv("SITE_URL", "http://127.0.0.1:8000")
 INDEXNOW_KEY = os.getenv("INDEXNOW_KEY", "")
-
 
 
