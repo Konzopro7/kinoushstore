@@ -2,7 +2,24 @@ from django.contrib import admin, messages
 from django.utils import timezone
 
 from .emails import email_delivered, email_shipped
-from .models import Order, OrderItem, NewsletterSubscriber
+from .models import Category, Order, OrderItem, NewsletterSubscriber, Product
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "slug", "show_in_menu")
+    list_filter = ("show_in_menu",)
+    search_fields = ("name", "slug")
+    prepopulated_fields = {"slug": ("name",)}
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ("title", "category", "price", "stock", "gender", "is_featured")
+    list_filter = ("gender", "is_featured", "category")
+    search_fields = ("title", "slug")
+    prepopulated_fields = {"slug": ("title",)}
+    list_select_related = ("category",)
 
 
 class OrderItemInline(admin.TabularInline):
