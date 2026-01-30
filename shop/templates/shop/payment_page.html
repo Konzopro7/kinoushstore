@@ -543,7 +543,16 @@
 
 
 
-  const stripe = Stripe("{{ stripe_publishable_key }}");
+  const publishableKey = "{{ stripe_publishable_key }}";
+  let stripe = null;
+  if (!publishableKey) {
+    const errorEl = document.getElementById("error-message");
+    if (errorEl) {
+      errorEl.textContent = "Clé Stripe manquante. Ajoute STRIPE_PUBLISHABLE_KEY sur Vercel.";
+    }
+  } else {
+    stripe = Stripe(publishableKey);
+  }
 
 
 
@@ -687,7 +696,18 @@
 
 
 
+  function setError(message) {
+    const errorEl = document.getElementById("error-message");
+    if (errorEl) {
+      errorEl.textContent = message;
+    }
+  }
+
   async function initStripe() {
+    if (!stripe) {
+      setError("Stripe n'est pas configuré. Ajoute STRIPE_PUBLISHABLE_KEY sur Vercel.");
+      return;
+    }
 
 
 
@@ -735,71 +755,22 @@
 
 
 
-    const res = await fetch(url, {
-
-
-
-
-
-
-
-      method: "POST",
-
-
-
-
-
-
-
-      headers: {
-
-
-
-
-
-
-
-        "Content-Type": "application/json",
-
-
-
-
-
-
-
-        "X-CSRFToken": csrftoken,
-
-
-
-
-
-
-
-      },
-
-
-
-
-
-
-
-      credentials: "same-origin",   // ? IMPORTANT
-
-
-
-
-
-
-
-      body: JSON.stringify({}),
-
-
-
-
-
-
-
-    });
+    let res;
+    try {
+      res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrftoken,
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({}),
+      });
+    } catch (err) {
+      console.error("Intent fetch failed:", err);
+      setError("Impossible de contacter le serveur. R?essaie.");
+      return;
+    }
 
 
 
@@ -1032,6 +1003,11 @@
 
 
     const payBtn = document.getElementById("payBtn");
+    if (!stripe) {
+      payBtn.disabled = true;
+      payBtn.textContent = "Configurer Stripe";
+      return;
+    }
 
 
 

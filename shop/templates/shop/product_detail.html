@@ -121,7 +121,7 @@
 
 
 
-        <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.title }}">
+        <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.title }}" onerror="this.onerror=null;this.src='{% static 'img/og-default.svg' %}';">
 
 
 
