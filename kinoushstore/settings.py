@@ -164,7 +164,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 TEMPLATES[0]['DIRS'] = [os.path.join(BASE_DIR, 'shop/templates')]
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 WHITENOISE_USE_FINDERS = True
 
 if USE_CLOUDINARY:
@@ -177,9 +176,20 @@ if USE_CLOUDINARY:
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
     if _CLOUDINARY_CLOUD_NAME:
         MEDIA_URL = f"https://res.cloudinary.com/{_CLOUDINARY_CLOUD_NAME}/"
+    STORAGES = {
+        "default": {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"},
+        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
+    }
 else:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+            "OPTIONS": {"location": MEDIA_ROOT, "base_url": MEDIA_URL},
+        },
+        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
+    }
 
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
