@@ -501,3 +501,75 @@ header .container {
   justify-content:center;
   font-weight:700;
 }
+
+/* --- HEADER MOBILE --- */
+.header-wrap {
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.main-nav a {
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+}
+
+.main-nav a:hover {
+  color: #0d6efd;
+}
+
+.menu-toggle {
+  display: none;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.35rem 0.6rem;
+  gap: 4px;
+}
+
+.menu-bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #111;
+  border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .main-nav {
+    order: 4;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    display: none;
+    gap: 0.5rem;
+  }
+
+  .main-nav.is-open {
+    display: flex;
+  }
+
+  .navbar-brand {
+    order: 1;
+  }
+
+  .menu-toggle {
+    order: 2;
+  }
+
+  .icon-bar {
+    order: 3;
+    margin-left: auto;
+  }
+}

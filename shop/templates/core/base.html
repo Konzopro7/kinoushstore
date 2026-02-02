@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 
 
 
@@ -153,7 +153,7 @@
 
 
 
-  <div class="container py-3 d-flex align-items-center justify-content-between">
+  <div class="container py-3 d-flex align-items-center justify-content-between header-wrap">
 
 
 
@@ -189,7 +189,14 @@
 
 
 
-   <nav class="d-flex gap-3">
+    <button class="menu-toggle" type="button" aria-controls="main-nav" aria-expanded="false">
+      <span class="visually-hidden">Menu</span>
+      <span class="menu-bar"></span>
+      <span class="menu-bar"></span>
+      <span class="menu-bar"></span>
+    </button>
+
+   <nav id="main-nav" class="main-nav d-flex gap-3">
 
 
 
@@ -319,23 +326,7 @@
 
 
 
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </div>  <!-- ðŸ”¹ fermeture du .container -->
+</div>  </div>
 
 
 </header>
@@ -540,21 +531,26 @@
 
 </footer>
 
-
-
-
-
-
-
-
-
-
+<script>
+  (function () {
+    const toggle = document.querySelector(".menu-toggle");
+    const nav = document.getElementById("main-nav");
+    if (!toggle || !nav) return;
+    toggle.addEventListener("click", () => {
+      const isOpen = nav.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+  })();
+</script>
 
 </body>
 
 
 
 </html>
+
+
+
 
 
 
