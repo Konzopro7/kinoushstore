@@ -26,7 +26,7 @@ from django.conf import settings
 
 from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.db.models.functions import TruncDate
 
 
@@ -188,106 +188,31 @@ def home(request):
 
 def product_list(request, gender=None):
 
-
-
-
-
-
-
     products = Product.objects.all()
 
-
-
-
-
-
-
     if gender in ("homme", "femme"):
+        gender_aliases = {
+            "homme": ["homme", "hommes", "Homme", "Hommes", "unisex", "Unisex"],
+            "femme": ["femme", "femmes", "Femme", "Femmes", "unisex", "Unisex"],
+        }
+        products = products.filter(gender__in=gender_aliases[gender])
 
-
-
-
-
-
-
-        products = products.filter(gender=gender)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    search_query = request.GET.get("search", "").strip()
+    if search_query:
+        products = products.filter(
+            Q(title__icontains=search_query)
+            | Q(short_description__icontains=search_query)
+            | Q(description__icontains=search_query)
+        )
 
     categories = Category.objects.all()
 
-
-
-
-
-
-
     return render(request, "shop/product_list.html", {
-
-
-
-
-
-
-
         "products": products,
-
-
-
-
-
-
-
         "categories": categories,
-
-
-
-
-
-
-
         "current_gender": gender,
-
-
-
-
-
-
-
+        "search_query": search_query,
     })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def product_list_men(request):
