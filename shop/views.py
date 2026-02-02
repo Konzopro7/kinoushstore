@@ -35,6 +35,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 from django.http import HttpResponse
+from django.core.mail import send_mail
 
 
 
@@ -3400,54 +3401,47 @@ def indexnow_key(request, key):
 
 def contact(request):
 
+    client_email = settings.EMAIL_HOST_USER or "contact@kinoushstore.com"
+    client_phone = "+1 (819) 209-8271"
 
+    if request.method == "POST":
+        first_name = request.POST.get("first_name", "").strip()
+        last_name = request.POST.get("last_name", "").strip()
+        email = request.POST.get("email", "").strip()
+        message = request.POST.get("message", "").strip()
 
+        if not all([first_name, last_name, email, message]):
+            messages.error(request, "Veuillez remplir tous les champs.")
+        else:
+            subject = f"Nouveau message - {first_name} {last_name}"
+            body = (
+                f"Nom: {first_name} {last_name}
+"
+                f"Email: {email}
 
+"
+                f"Message:
+{message}
+"
+            )
+            try:
+                send_mail(
+                    subject,
+                    body,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [client_email],
+                    reply_to=[email],
+                )
+                messages.success(request, "Merci ! Votre message a ?t? envoy?.")
+                return redirect("shop:contact")
+            except Exception:
+                messages.error(
+                    request,
+                    "Impossible d'envoyer le message pour le moment. R?essayez plus tard.",
+                )
 
     return render(request, "shop/contact.html", {
-
-
-
-
-
-        "client_email": settings.EMAIL_HOST_USER or "contact@kinoushstore.com",
-
-
-
-
-
-        "client_phone": "+1 (819) 209-8271",
-
-
-
-
-
+        "client_email": client_email,
+        "client_phone": client_phone,
     })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

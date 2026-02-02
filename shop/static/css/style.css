@@ -177,11 +177,11 @@ img {
 
 
 header {
-  background: #000;
+  background: #fff;
 }
 
 header a {
-  color: #fff;
+  color: #111;
 }
 
 header a:hover {
@@ -525,16 +525,17 @@ header .container {
 
 .menu-toggle {
   display: none;
-  border: 1px solid #ddd;
-  background: #fff;
-  border-radius: 8px;
-  padding: 0.35rem 0.6rem;
+  border: none;
+  background: #f3f3f7;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
   gap: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
 }
 
 .menu-bar {
   display: block;
-  width: 22px;
+  width: 20px;
   height: 2px;
   background: #111;
   border-radius: 2px;
@@ -554,10 +555,18 @@ header .container {
     align-items: flex-start;
     display: none;
     gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #eee;
   }
 
   .main-nav.is-open {
     display: flex;
+  }
+
+  .main-nav a {
+    width: 100%;
+    padding: 0.35rem 0;
   }
 
   .navbar-brand {
