@@ -30,6 +30,10 @@
 {% block twitter_description %}Boutique en ligne Kinoush Store : parfums, habits et accessoires. Découvrez nos nouveautés et collections du moment.{% endblock %}
 {% block canonical_url %}{{ request.scheme }}://{{ request.get_host }}{% url 'shop:home' %}{% endblock %}
 
+{% block extra_head %}
+  <link rel="preload" as="image" href="{% static 'img/hero.jpg' %}">
+{% endblock %}
+
 
 
 
