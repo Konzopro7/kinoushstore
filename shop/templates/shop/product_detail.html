@@ -107,51 +107,13 @@
 
     <div class="col-md-6 mb-4">
 
-
-
-
-
-
-
-      {% if product.image %}
-
-
-
-
-
-
-
-        <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.title }}" onerror="this.onerror=null;this.src='{% static 'img/og-default.svg' %}';">
-
-
-
-
-
-
-
-      {% else %}
-
-
-
-
-
-
-
-        <div class="bg-secondary" style="height:400px;"></div>
-
-
-
-
-
-
-
-      {% endif %}
-
-
-
-
-
-
+      <div class="product-detail-media">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" class="product-detail-image" alt="{{ product.title }}" onerror="this.onerror=null;this.src='{% static 'img/og-default.svg' %}';">
+        {% else %}
+          <div class="product-detail-placeholder"></div>
+        {% endif %}
+      </div>
 
     </div>
 
