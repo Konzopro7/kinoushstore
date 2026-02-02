@@ -242,19 +242,6 @@
 
 
 
-  <!-- Recherche -->
-
-
-
-  <div class="search-menu">
-    <button type="button" class="header-icon search-toggle" aria-expanded="false" aria-controls="search-panel" title="Rechercher">
-      <img src="{% static 'icons/search.png' %}" alt="Rechercher">
-    </button>
-    <form id="search-panel" class="search-panel" method="get" action="{% url 'shop:product_list' %}">
-      <input type="search" name="search" placeholder="Rechercher un produit..." value="{{ request.GET.search|default:'' }}">
-      <button type="submit" class="btn btn-dark btn-sm">OK</button>
-    </form>
-  </div>
 
 
 
@@ -541,34 +528,6 @@
       toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
     });
 
-    const searchMenu = document.querySelector(".search-menu");
-    const searchToggle = document.querySelector(".search-toggle");
-    const searchPanel = document.getElementById("search-panel");
-    const searchInput = searchPanel ? searchPanel.querySelector("input[name='search']") : null;
-    if (!searchMenu || !searchToggle || !searchPanel) return;
-
-    searchToggle.addEventListener("click", (event) => {
-      event.preventDefault();
-      const isOpen = searchMenu.classList.toggle("is-open");
-      searchToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      if (isOpen && searchInput) {
-        searchInput.focus();
-      }
-    });
-
-    document.addEventListener("click", (event) => {
-      if (!searchMenu.contains(event.target)) {
-        searchMenu.classList.remove("is-open");
-        searchToggle.setAttribute("aria-expanded", "false");
-      }
-    });
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-        searchMenu.classList.remove("is-open");
-        searchToggle.setAttribute("aria-expanded", "false");
-      }
-    });
   })();
 </script>
 

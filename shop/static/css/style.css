@@ -382,52 +382,6 @@ header .container {
   filter: brightness(2);            /* ic??ne plus lumineuse sur fond noir */
 }
 
-.search-menu {
-  position: relative;
-}
-
-.header-icon.search-toggle {
-  border: none;
-  padding: 0;
-}
-
-.search-panel {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 8px);
-  display: none;
-  align-items: center;
-  gap: 8px;
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 999px;
-  padding: 6px 8px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-  z-index: 1000;
-}
-
-.search-menu.is-open .search-panel {
-  display: flex;
-}
-
-.search-panel input {
-  border: none;
-  outline: none;
-  background: transparent;
-  width: 210px;
-  font-size: 14px;
-}
-
-@media (max-width: 576px) {
-  .search-panel {
-    width: 80vw;
-    right: -40px;
-  }
-  .search-panel input {
-    width: 100%;
-  }
-}
-
 .cart-badge {
   position: absolute;
   top: -6px;
