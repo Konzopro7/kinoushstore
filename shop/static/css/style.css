@@ -576,26 +576,16 @@ header .container {
 }
 
 @media (max-width: 768px) {
-  .menu-toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   .main-nav {
     order: 4;
     width: 100%;
     flex-direction: column;
     align-items: flex-start;
-    display: none;
+    display: flex;
     gap: 0.5rem;
     margin-top: 0.5rem;
     padding-top: 0.75rem;
     border-top: 1px solid #eee;
-  }
-
-  .main-nav.is-open {
-    display: flex;
   }
 
   .main-nav a {
@@ -605,10 +595,6 @@ header .container {
 
   .navbar-brand {
     order: 1;
-  }
-
-  .menu-toggle {
-    order: 2;
   }
 
   .icon-bar {
