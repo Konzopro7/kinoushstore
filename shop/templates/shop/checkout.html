@@ -279,30 +279,19 @@
 
 
 
-        <div class="d-flex justify-content-between border-top pt-3">
-
-
-
-
-
-
-
-          <strong>Total</strong>
-
-
-
-
-
-
-
-          <strong>{{ total }} $</strong>
-
-
-
-
-
-
-
+        <div class="border-top pt-3">
+          <div class="d-flex justify-content-between">
+            <span>Sous-total</span>
+            <span id="checkout-subtotal" data-subtotal="{{ total|floatformat:2 }}">{{ total|floatformat:2 }} $</span>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span>Frais de livraison</span>
+            <span id="checkout-shipping">{{ shipping_default|floatformat:2 }} $</span>
+          </div>
+          <div class="d-flex justify-content-between fw-bold mt-2">
+            <span>Total</span>
+            <span id="checkout-total">{{ grand_total_default|floatformat:2 }} $</span>
+          </div>
         </div>
 
 
@@ -728,6 +717,19 @@
 
 
   <hr class="my-4">
+  <h5 class="mb-2">Livraison</h5>
+  <p class="text-muted mb-3">Choisissez une option de livraison.</p>
+  <div class="mb-3">
+    <div class="form-check">
+      <input class="form-check-input shipping-option" type="radio" name="shipping_fee" id="ship_standard" value="10.00" checked>
+      <label class="form-check-label" for="ship_standard">Livraison standard (+10 $)</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input shipping-option" type="radio" name="shipping_fee" id="ship_pickup" value="0.00">
+      <label class="form-check-label" for="ship_pickup">Ramassage en magasin (gratuit)</label>
+    </div>
+  </div>
+  <hr class="my-4">
 
 
 
@@ -934,6 +936,29 @@
 
 
 
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const subtotalEl = document.getElementById("checkout-subtotal");
+    const shippingEl = document.getElementById("checkout-shipping");
+    const totalEl = document.getElementById("checkout-total");
+    const options = document.querySelectorAll("input[name=\"shipping_fee\"]");
+    if (!subtotalEl || !shippingEl || !totalEl || options.length === 0) {
+      return;
+    }
+    const base = parseFloat(subtotalEl.dataset.subtotal || "0") || 0;
+    const format = (val) => val.toFixed(2) + " $";
+    const update = () => {
+      const selected = document.querySelector("input[name=\"shipping_fee\"]:checked");
+      const fee = selected ? parseFloat(selected.value) || 0 : 0;
+      shippingEl.textContent = format(fee);
+      totalEl.textContent = format(base + fee);
+    };
+    options.forEach((opt) => opt.addEventListener("change", update));
+    update();
+  });
+</script>
 
 {% endblock %}
 

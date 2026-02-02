@@ -2,7 +2,7 @@ from django.contrib import admin, messages
 from django.utils import timezone
 
 from .emails import email_delivered, email_shipped
-from .models import Category, Order, OrderItem, NewsletterSubscriber, Product
+from .models import Category, Order, OrderItem, NewsletterSubscriber, Product, SiteVisit
 
 
 @admin.register(Category)
@@ -30,12 +30,19 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ("reference", "email", "status", "created_at", "paid_at")
+    list_display = ("reference", "email", "status", "created_at", "paid_at", "shipping_fee")
     list_filter = ("status", "created_at")
     search_fields = ("reference", "email")
     inlines = [OrderItemInline]
 
-    readonly_fields = ("reference", "stripe_session_id", "stripe_payment_intent", "created_at", "paid_at")
+    readonly_fields = (
+        "reference",
+        "stripe_session_id",
+        "stripe_payment_intent",
+        "created_at",
+        "paid_at",
+        "shipping_fee",
+    )
     actions = ["mark_shipped", "mark_delivered"]
 
     def mark_shipped(self, request, queryset):
@@ -109,3 +116,22 @@ class NewsletterSubscriberAdmin(admin.ModelAdmin):
     list_display = ("email", "is_active", "created_at")
     search_fields = ("email",)
     list_filter = ("is_active", "created_at")
+
+
+@admin.register(SiteVisit)
+class SiteVisitAdmin(admin.ModelAdmin):
+    list_display = ("path", "created_at", "status_code", "ip_address", "user")
+    list_filter = ("status_code", "created_at")
+    search_fields = ("path", "referrer", "ip_address", "user_agent")
+    readonly_fields = (
+        "path",
+        "method",
+        "status_code",
+        "referrer",
+        "user_agent",
+        "ip_address",
+        "user",
+        "created_at",
+    )
+    ordering = ("-created_at",)
+    list_select_related = ("user",)

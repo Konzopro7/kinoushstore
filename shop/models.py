@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
@@ -67,6 +69,7 @@ class Order(models.Model):
     address = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=100, blank=True)
     phone = models.CharField(max_length=30, blank=True)
+    shipping_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     reference = models.CharField(max_length=20, unique=True, blank=True)
 
@@ -99,7 +102,8 @@ class Order(models.Model):
 
     @property
     def total(self):
-        return sum(item.total for item in self.items.all())
+        items_total = sum((item.total for item in self.items.all()), Decimal("0.00"))
+        return items_total + (self.shipping_fee or Decimal("0.00"))
 
     def save(self, *args, **kwargs):
         """Génère une référence du type KNS-2025-0001 au premier enregistrement."""
@@ -121,6 +125,27 @@ class OrderItem(models.Model):
     @property
     def total(self):
         return self.price * self.quantity
+
+
+class SiteVisit(models.Model):
+    path = models.CharField(max_length=255)
+    method = models.CharField(max_length=10, default="GET")
+    status_code = models.PositiveSmallIntegerField(default=200)
+    referrer = models.CharField(max_length=500, blank=True)
+    user_agent = models.CharField(max_length=500, blank=True)
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["created_at"]),
+            models.Index(fields=["path"]),
+        ]
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.path} ({self.created_at:%Y-%m-%d %H:%M})"
 
 
 class NewsletterSubscriber(models.Model):

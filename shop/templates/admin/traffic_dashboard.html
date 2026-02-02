@@ -1,0 +1,143 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %}Traffic dashboard{% endblock %}
+
+{% block content %}
+  <h1>Traffic dashboard</h1>
+
+  <div class="module" style="padding: 16px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+      <div class="module" style="padding: 12px;">
+        <h2 style="margin-top: 0;">Total visits</h2>
+        <p style="font-size: 24px; margin: 0;">{{ total_visits }}</p>
+        <p class="quiet" style="margin: 4px 0 0;">All time</p>
+      </div>
+      <div class="module" style="padding: 12px;">
+        <h2 style="margin-top: 0;">Visits (7d)</h2>
+        <p style="font-size: 24px; margin: 0;">{{ visits_7d }}</p>
+        <p class="quiet" style="margin: 4px 0 0;">Last 7 days</p>
+      </div>
+      <div class="module" style="padding: 12px;">
+        <h2 style="margin-top: 0;">Visits (30d)</h2>
+        <p style="font-size: 24px; margin: 0;">{{ visits_30d }}</p>
+        <p class="quiet" style="margin: 4px 0 0;">Last 30 days</p>
+      </div>
+      <div class="module" style="padding: 12px;">
+        <h2 style="margin-top: 0;">Unique (30d)</h2>
+        <p style="font-size: 24px; margin: 0;">{{ unique_30d }}</p>
+        <p class="quiet" style="margin: 4px 0 0;">Distinct IPs</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="module" style="padding: 16px;">
+    <h2>Daily traffic (14 days)</h2>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Visits</th>
+          <th style="width: 50%;">Trend</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in daily %}
+          <tr>
+            <td>{{ row.day|date:"Y-m-d" }}</td>
+            <td>{{ row.count }}</td>
+            <td>
+              <div style="background: #eee; height: 8px; border-radius: 4px; overflow: hidden;">
+                <div style="background: #417690; height: 8px; width: {{ row.pct }}%;"></div>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="3">No traffic yet.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="module" style="padding: 16px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+      <div class="module" style="padding: 12px;">
+        <h2 style="margin-top: 0;">Top pages (30d)</h2>
+        <table class="adminlist">
+          <thead>
+            <tr>
+              <th>Path</th>
+              <th>Visits</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in top_pages %}
+              <tr>
+                <td>{{ row.path }}</td>
+                <td>{{ row.count }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="2">No data.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="module" style="padding: 12px;">
+        <h2 style="margin-top: 0;">Top referrers (30d)</h2>
+        <table class="adminlist">
+          <thead>
+            <tr>
+              <th>Referrer</th>
+              <th>Visits</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in top_referrers %}
+              <tr>
+                <td style="word-break: break-all;">{{ row.referrer }}</td>
+                <td>{{ row.count }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="2">No data.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="module" style="padding: 16px;">
+    <h2>Recent visits</h2>
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Path</th>
+          <th>Status</th>
+          <th>IP</th>
+          <th>User</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for visit in recent_visits %}
+          <tr>
+            <td>{{ visit.created_at|date:"Y-m-d H:i" }}</td>
+            <td>{{ visit.path }}</td>
+            <td>{{ visit.status_code }}</td>
+            <td>{{ visit.ip_address }}</td>
+            <td>{% if visit.user %}{{ visit.user.username }}{% else %}-{% endif %}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5">No visits yet.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

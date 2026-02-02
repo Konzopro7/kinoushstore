@@ -17,6 +17,7 @@ sitemaps = {
 }
 
 urlpatterns = [
+    path("admin/traffic/", views.admin_traffic_dashboard, name="admin_traffic_dashboard"),
     path("admin/", admin.site.urls),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
     path("favicon.ico", RedirectView.as_view(url=static_url("img/favicon.ico"), permanent=True)),

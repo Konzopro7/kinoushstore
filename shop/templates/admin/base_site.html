@@ -1,0 +1,12 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} | {{ site_header|default:"Django administration" }}{% endblock %}
+
+{% block branding %}
+  <h1 id="site-name">
+    <a href="{% url 'admin:index' %}">{{ site_header|default:"Django administration" }}</a>
+  </h1>
+  <div style="margin-top: 6px;">
+    <a href="{% url 'admin_traffic_dashboard' %}">Traffic dashboard</a>
+  </div>
+{% endblock %}

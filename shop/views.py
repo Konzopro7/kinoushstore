@@ -1,4 +1,6 @@
+from datetime import timedelta
 from decimal import Decimal, ROUND_HALF_UP
+import logging
 
 
 
@@ -23,6 +25,9 @@ from django.conf import settings
 
 
 from django.utils import timezone
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db.models import Count
+from django.db.models.functions import TruncDate
 
 
 
@@ -67,7 +72,7 @@ from django.http import JsonResponse
 
 
 
-from .models import Product, Category, Order, OrderItem, NewsletterSubscriber
+from .models import Product, Category, Order, OrderItem, NewsletterSubscriber, SiteVisit
 
 
 
@@ -77,6 +82,16 @@ from .models import Product, Category, Order, OrderItem, NewsletterSubscriber
 
 from django.views.decorators.http import require_POST
 
+logger = logging.getLogger(__name__)
+
+
+def _parse_shipping_fee(value):
+    try:
+        fee = Decimal(str(value))
+    except (TypeError, ValueError, ArithmeticError):
+        return Decimal("0.00")
+    allowed = {Decimal("0.00"), Decimal("10.00")}
+    return fee if fee in allowed else Decimal("0.00")
 
 
 
@@ -1255,6 +1270,9 @@ def checkout(request):
 
 
 
+    shipping_default = Decimal("10.00")
+    grand_total_default = (total + shipping_default).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
     if request.method == "POST":
 
 
@@ -1300,6 +1318,8 @@ def checkout(request):
 
 
         phone = request.POST.get("phone", "").strip()
+        shipping_fee = _parse_shipping_fee(request.POST.get("shipping_fee", "10.00"))
+
 
 
 
@@ -1390,6 +1410,7 @@ def checkout(request):
 
 
             phone=phone,
+            shipping_fee=shipping_fee,
 
 
 
@@ -1507,7 +1528,12 @@ def checkout(request):
 
 
 
-    return render(request, "shop/checkout.html", {"items": items, "total": total})
+    return render(request, "shop/checkout.html", {
+        "items": items,
+        "total": total,
+        "shipping_default": shipping_default,
+        "grand_total_default": grand_total_default,
+    })
 
 
 
@@ -1629,6 +1655,8 @@ def order_tracking(request):
 
 
 
+    subtotal = Decimal("0.00")
+    shipping_fee = Decimal("0.00")
     total = Decimal("0.00")
 
 
@@ -1745,7 +1773,7 @@ def order_tracking(request):
 
 
 
-                    total += line_total
+                    subtotal += line_total
 
 
 
@@ -1801,6 +1829,9 @@ def order_tracking(request):
 
 
 
+                shipping_fee = Decimal(str(order.shipping_fee or 0)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+                total = (subtotal + shipping_fee).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
     return render(request, "shop/order_tracking.html", {
 
 
@@ -1818,6 +1849,8 @@ def order_tracking(request):
 
 
         "items": items,
+        "subtotal": subtotal,
+        "shipping_fee": shipping_fee,
 
 
 
@@ -1863,6 +1896,72 @@ def order_tracking(request):
 
 
 
+
+
+@staff_member_required
+def admin_traffic_dashboard(request):
+    now = timezone.now()
+    last_7 = now - timedelta(days=7)
+    last_30 = now - timedelta(days=30)
+
+    qs = SiteVisit.objects.all()
+
+    total_visits = qs.count()
+    visits_7d = qs.filter(created_at__gte=last_7).count()
+    visits_30d = qs.filter(created_at__gte=last_30).count()
+    unique_30d = (
+        qs.filter(created_at__gte=last_30)
+        .exclude(ip_address__isnull=True)
+        .exclude(ip_address="")
+        .values("ip_address")
+        .distinct()
+        .count()
+    )
+
+    top_pages = (
+        qs.filter(created_at__gte=last_30)
+        .values("path")
+        .annotate(count=Count("id"))
+        .order_by("-count")[:10]
+    )
+    top_referrers = (
+        qs.filter(created_at__gte=last_30)
+        .exclude(referrer="")
+        .values("referrer")
+        .annotate(count=Count("id"))
+        .order_by("-count")[:10]
+    )
+
+    start_day = (now - timedelta(days=13)).date()
+    day_counts = (
+        qs.filter(created_at__date__gte=start_day)
+        .annotate(day=TruncDate("created_at"))
+        .values("day")
+        .annotate(count=Count("id"))
+        .order_by("day")
+    )
+    day_map = {row["day"]: row["count"] for row in day_counts}
+    daily = [
+        {"day": start_day + timedelta(days=i), "count": day_map.get(start_day + timedelta(days=i), 0)}
+        for i in range(14)
+    ]
+    max_daily = max((row["count"] for row in daily), default=0)
+    for row in daily:
+        row["pct"] = 0 if max_daily == 0 else int((row["count"] / max_daily) * 100)
+
+    recent_visits = qs.select_related("user")[:20]
+
+    return render(request, "admin/traffic_dashboard.html", {
+        "total_visits": total_visits,
+        "visits_7d": visits_7d,
+        "visits_30d": visits_30d,
+        "unique_30d": unique_30d,
+        "top_pages": top_pages,
+        "top_referrers": top_referrers,
+        "daily": daily,
+        "max_daily": max_daily,
+        "recent_visits": recent_visits,
+    })
 
 
 # STRIPE
@@ -1992,6 +2091,8 @@ def start_payment(request):
 
 
     phone = request.POST.get("phone", "").strip()
+    shipping_fee = _parse_shipping_fee(request.POST.get("shipping_fee", "10.00"))
+
 
 
 
@@ -2080,6 +2181,7 @@ def start_payment(request):
 
 
         phone=phone,
+        shipping_fee=shipping_fee,
 
 
 
@@ -2218,59 +2320,23 @@ def payment_page(request, reference):
 
 
     items = []
+    subtotal = Decimal("0.00")
+
 
 
 
 
 
     for it in OrderItem.objects.select_related("product").filter(order=order):
-
-
-
-
-
+        line_total = (Decimal(str(it.price)) * int(it.quantity)).quantize(
+            Decimal("0.01"), rounding=ROUND_HALF_UP
+        )
+        subtotal += line_total
         items.append({
-
-
-
-
-
             "title": it.product.title,
-
-
-
-
-
             "quantity": it.quantity,
-
-
-
-
-
             "price": Decimal(str(it.price)),
-
-
-
-
-
-            "line_total": (Decimal(str(it.price)) * int(it.quantity)).quantize(
-
-
-
-
-
-                Decimal("0.01"), rounding=ROUND_HALF_UP
-
-
-
-
-
-            ),
-
-
-
-
-
+            "line_total": line_total,
         })
 
 
@@ -2282,6 +2348,9 @@ def payment_page(request, reference):
 
 
 
+
+    shipping_fee = Decimal(str(order.shipping_fee or 0)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    total = (subtotal + shipping_fee).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
     return render(request, "shop/payment_page.html", {
 
@@ -2296,12 +2365,14 @@ def payment_page(request, reference):
 
 
         "items": items,
+        "subtotal": subtotal,
+        "shipping_fee": shipping_fee,
 
 
 
 
 
-        "total": Decimal(str(order.total)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP),
+        "total": total,
 
 
 
@@ -3430,6 +3501,12 @@ def contact(request):
                 messages.success(request, "Merci ! Votre message a ete envoye.")
                 return redirect("shop:contact")
             except Exception:
+                logger.exception(
+                    "Contact email failed for %s %s <%s>",
+                    first_name,
+                    last_name,
+                    email,
+                )
                 messages.error(
                     request,
                     "Impossible d'envoyer le message pour le moment. Reessayez plus tard.",
