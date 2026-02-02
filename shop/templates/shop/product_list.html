@@ -26,11 +26,11 @@
 
 {% block meta_description %}
   {% if current_category %}
-    Decouvrez la categorie {{ current_category.name }} : parfums, habits et accessoires chez Kinoush Store.
+    Découvrez la catégorie {{ current_category.name }} : parfums, habits et accessoires chez Kinoush Store.
   {% elif current_gender == 'homme' %}
-    Selection homme : parfums, habits et accessoires tendance sur Kinoush Store.
+    Sélection homme : parfums, habits et accessoires tendance sur Kinoush Store.
   {% elif current_gender == 'femme' %}
-    Selection femme : parfums, habits et accessoires tendance sur Kinoush Store.
+    Sélection femme : parfums, habits et accessoires tendance sur Kinoush Store.
   {% else %}
     Parcourez toute la boutique Kinoush Store : parfums, habits et accessoires pour tous les styles.
   {% endif %}
@@ -62,11 +62,11 @@
 
 {% block og_description %}
   {% if current_category %}
-    Decouvrez la categorie {{ current_category.name }} : parfums, habits et accessoires chez Kinoush Store.
+    Découvrez la catégorie {{ current_category.name }} : parfums, habits et accessoires chez Kinoush Store.
   {% elif current_gender == 'homme' %}
-    Selection homme : parfums, habits et accessoires tendance sur Kinoush Store.
+    Sélection homme : parfums, habits et accessoires tendance sur Kinoush Store.
   {% elif current_gender == 'femme' %}
-    Selection femme : parfums, habits et accessoires tendance sur Kinoush Store.
+    Sélection femme : parfums, habits et accessoires tendance sur Kinoush Store.
   {% else %}
     Parcourez toute la boutique Kinoush Store : parfums, habits et accessoires pour tous les styles.
   {% endif %}
@@ -74,11 +74,11 @@
 
 {% block twitter_description %}
   {% if current_category %}
-    Decouvrez la categorie {{ current_category.name }} : parfums, habits et accessoires chez Kinoush Store.
+    Découvrez la catégorie {{ current_category.name }} : parfums, habits et accessoires chez Kinoush Store.
   {% elif current_gender == 'homme' %}
-    Selection homme : parfums, habits et accessoires tendance sur Kinoush Store.
+    Sélection homme : parfums, habits et accessoires tendance sur Kinoush Store.
   {% elif current_gender == 'femme' %}
-    Selection femme : parfums, habits et accessoires tendance sur Kinoush Store.
+    Sélection femme : parfums, habits et accessoires tendance sur Kinoush Store.
   {% else %}
     Parcourez toute la boutique Kinoush Store : parfums, habits et accessoires pour tous les styles.
   {% endif %}
@@ -172,7 +172,7 @@
   {% if search_query %}
     <h1 class="h4 mb-1">R?sultats pour ?{{ search_query }}?</h1>
   {% elif current_category %}
-    <h1 class="h4 mb-1">Cat?gorie : {{ current_category.name }}</h1>
+    <h1 class="h4 mb-1">Catégorie : {{ current_category.name }}</h1>
   {% elif current_gender == 'homme' %}
     <h1 class="h4 mb-1">Boutique Hommes</h1>
   {% elif current_gender == 'femme' %}
@@ -180,7 +180,7 @@
   {% else %}
     <h1 class="h4 mb-1">Boutique</h1>
   {% endif %}
-  <p class="text-muted mb-0">Parfums, habits & accessoires s?lectionn?s.</p>
+  <p class="text-muted mb-0">Parfums, habits & accessoires sélectionnés.</p>
 </div>
 
 
@@ -382,7 +382,7 @@
 
 
 
-            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}" onerror="this.onerror=null;this.src='{% static 'img/og-default.svg' %}';">
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}" width="800" height="1000" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='{% static 'img/og-default.svg' %}';">
 
 
 

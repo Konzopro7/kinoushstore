@@ -95,6 +95,38 @@
     }
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Accueil",
+        "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'shop:home' %}"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Boutique",
+        "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'shop:product_list' %}"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "{{ product.category.name|escapejs }}",
+        "item": "{{ request.scheme }}://{{ request.get_host }}{{ product.category.get_absolute_url }}"
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "name": "{{ product.title|escapejs }}",
+        "item": "{{ request.build_absolute_uri }}"
+      }
+    ]
+  }
+  </script>
 {% endblock %}
 
 
@@ -139,7 +171,7 @@
 
       <div class="product-detail-media">
         {% if product.image %}
-          <img src="{{ product.image.url }}" class="product-detail-image" alt="{{ product.title }}" onerror="this.onerror=null;this.src='{% static 'img/og-default.svg' %}';">
+          <img src="{{ product.image.url }}" class="product-detail-image" alt="{{ product.title }}" width="800" height="1000" loading="eager" decoding="async" fetchpriority="high" onerror="this.onerror=null;this.src='{% static 'img/og-default.svg' %}';">
         {% else %}
           <div class="product-detail-placeholder"></div>
         {% endif %}
