@@ -3410,7 +3410,7 @@ def contact(request):
 
 
 
-        "client_email": settings.EMAIL_HOST_USER or "beckhamkasse@hotmail.com",
+        "client_email": settings.EMAIL_HOST_USER or "contact@kinoushstore.com",
 
 
 

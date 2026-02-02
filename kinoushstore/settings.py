@@ -219,7 +219,7 @@ if EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
     if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
         EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "Kinoush Store <no-reply@kinoush-store.local>")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "Kinoush Store <contact@kinoushstore.com>")
 
 
 
