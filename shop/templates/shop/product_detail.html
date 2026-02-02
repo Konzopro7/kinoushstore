@@ -43,6 +43,36 @@
 {% endblock %}
 
 {% block extra_head %}
+  <style>
+    .product-detail-media {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      max-height: 560px;
+      background: #f3f3f3;
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .product-detail-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .product-detail-placeholder {
+      width: 100%;
+      height: 100%;
+      background: #e1e1e1;
+    }
+    @media (max-width: 768px) {
+      .product-detail-media {
+        aspect-ratio: 1 / 1;
+        max-height: 420px;
+      }
+    }
+  </style>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
