@@ -19,6 +19,11 @@
   {% endif %}
 {% endblock %}
 
+{% block meta_robots %}
+  {% if search_query %}noindex, follow{% else %}{{ block.super }}{% endif %}
+{% endblock %}
+
+
 {% block meta_description %}
   {% if current_category %}
     Decouvrez la categorie {{ current_category.name }} : parfums, habits et accessoires chez Kinoush Store.
@@ -162,6 +167,22 @@
 
 
 </div>
+
+<div class="mb-3">
+  {% if search_query %}
+    <h1 class="h4 mb-1">R?sultats pour ?{{ search_query }}?</h1>
+  {% elif current_category %}
+    <h1 class="h4 mb-1">Cat?gorie : {{ current_category.name }}</h1>
+  {% elif current_gender == 'homme' %}
+    <h1 class="h4 mb-1">Boutique Hommes</h1>
+  {% elif current_gender == 'femme' %}
+    <h1 class="h4 mb-1">Boutique Femmes</h1>
+  {% else %}
+    <h1 class="h4 mb-1">Boutique</h1>
+  {% endif %}
+  <p class="text-muted mb-0">Parfums, habits & accessoires s?lectionn?s.</p>
+</div>
+
 
 
 
