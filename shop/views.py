@@ -194,9 +194,21 @@ def product_list(request, gender=None):
 
     if gender in ("homme", "femme"):
         if gender == "homme":
-            products = products.filter(Q(gender__iexact="homme") | Q(gender__iexact="hommes"))
+            products = products.filter(
+                Q(gender__iexact="homme")
+                | Q(gender__iexact="hommes")
+                | Q(category__name__iexact="homme")
+                | Q(category__name__iexact="hommes")
+                | Q(category__slug__in=["homme", "hommes"])
+            )
         else:
-            products = products.filter(Q(gender__iexact="femme") | Q(gender__iexact="femmes"))
+            products = products.filter(
+                Q(gender__iexact="femme")
+                | Q(gender__iexact="femmes")
+                | Q(category__name__iexact="femme")
+                | Q(category__name__iexact="femmes")
+                | Q(category__slug__in=["femme", "femmes"])
+            )
 
     search_query = request.GET.get("search", "").strip()
     if search_query:
