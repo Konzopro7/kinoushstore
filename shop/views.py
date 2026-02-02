@@ -3415,14 +3415,9 @@ def contact(request):
         else:
             subject = f"Nouveau message - {first_name} {last_name}"
             body = (
-                f"Nom: {first_name} {last_name}
-"
-                f"Email: {email}
-
-"
-                f"Message:
-{message}
-"
+                f"Nom: {first_name} {last_name}\n"
+                f"Email: {email}\n\n"
+                f"Message:\n{message}\n"
             )
             try:
                 send_mail(
@@ -3432,12 +3427,12 @@ def contact(request):
                     [client_email],
                     reply_to=[email],
                 )
-                messages.success(request, "Merci ! Votre message a ?t? envoy?.")
+                messages.success(request, "Merci ! Votre message a ete envoye.")
                 return redirect("shop:contact")
             except Exception:
                 messages.error(
                     request,
-                    "Impossible d'envoyer le message pour le moment. R?essayez plus tard.",
+                    "Impossible d'envoyer le message pour le moment. Reessayez plus tard.",
                 )
 
     return render(request, "shop/contact.html", {
