@@ -40,7 +40,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 from django.http import HttpResponse
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 
 
@@ -3397,7 +3399,11 @@ def indexnow_key(request, key):
 
 def contact(request):
 
-    client_email = settings.EMAIL_HOST_USER or "contact@kinoushstore.com"
+    client_email = (
+        getattr(settings, "CONTACT_EMAIL", "")
+        or settings.EMAIL_HOST_USER
+        or "contact@kinoushstore.com"
+    )
     client_phone = "+1 (819) 209-8271"
 
     if request.method == "POST":
@@ -3416,13 +3422,20 @@ def contact(request):
                 f"Message:\n{message}\n"
             )
             try:
-                send_mail(
-                    subject,
-                    body,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [client_email],
-                    reply_to=[email],
+                from_email = settings.EMAIL_HOST_USER or settings.DEFAULT_FROM_EMAIL or client_email
+                try:
+                    validate_email(email)
+                    reply_to = [email]
+                except ValidationError:
+                    reply_to = []
+                msg = EmailMessage(
+                    subject=subject,
+                    body=body,
+                    from_email=from_email,
+                    to=[client_email],
+                    reply_to=reply_to,
                 )
+                msg.send(fail_silently=False)
                 messages.success(request, "Merci ! Votre message a ete envoye.")
                 return redirect("shop:contact")
             except Exception:
