@@ -602,3 +602,209 @@ header .container {
     margin-left: auto;
   }
 }
+
+/* ------------------------------------------------------------------
+   Theme v2 (Overrides) - more premium look without changing behavior
+   ------------------------------------------------------------------ */
+:root {
+  --bg: #0b0f1a;
+  --bg2: #0f1b2d;
+  --surface: #ffffff;
+  --surface2: rgba(255, 255, 255, 0.86);
+  --text: #0b1220;
+  --muted: rgba(11, 18, 32, 0.62);
+  --border: rgba(11, 18, 32, 0.10);
+  --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.10);
+  --shadow-md: 0 16px 40px rgba(0, 0, 0, 0.18);
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --brand: #2a6cff;
+  --brand2: #00d1b2;
+  --brand3: #ff2d55;
+}
+
+body {
+  font-family: "Plus Jakarta Sans", "Poppins", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(1200px 600px at 20% -10%, rgba(42, 108, 255, 0.28), rgba(0, 0, 0, 0) 60%),
+    radial-gradient(1000px 500px at 85% 0%, rgba(0, 209, 178, 0.22), rgba(0, 0, 0, 0) 60%),
+    linear-gradient(180deg, #fbfcff 0%, #f6f8ff 40%, #f7f7fb 100%);
+  color: var(--text);
+}
+
+main {
+  min-height: 60vh;
+}
+
+/* Header: glassy + crisp */
+header {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.72);
+  border-bottom: 1px solid rgba(11, 18, 32, 0.08);
+  box-shadow: none;
+}
+
+.brand-text {
+  font-family: "Fraunces", "Plus Jakarta Sans", "Poppins", serif;
+  letter-spacing: 0.6px;
+}
+
+.navbar-brand img {
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.10));
+}
+
+.main-nav a {
+  position: relative;
+  padding: 0.35rem 0.2rem;
+  color: rgba(11, 18, 32, 0.84);
+}
+
+.main-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  right: 0.2rem;
+  bottom: 0.12rem;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--brand), var(--brand2));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+  opacity: 0.9;
+}
+
+.main-nav a:hover::after {
+  transform: scaleX(1);
+}
+
+.icon-bar {
+  gap: 14px;
+}
+
+.header-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(11, 18, 32, 0.08);
+  box-shadow: 0 10px 28px rgba(11, 18, 32, 0.10);
+}
+
+.header-icon:hover {
+  background: rgba(11, 18, 32, 0.92);
+}
+
+/* Buttons */
+.btn {
+  border-radius: 999px;
+}
+
+.btn-dark {
+  background: linear-gradient(135deg, rgba(11, 18, 32, 0.98), rgba(11, 18, 32, 0.88));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 14px 30px rgba(11, 18, 32, 0.18);
+}
+
+.btn-dark:hover {
+  background: linear-gradient(135deg, rgba(42, 108, 255, 0.95), rgba(0, 209, 178, 0.75));
+}
+
+.btn-outline-dark {
+  border-color: rgba(11, 18, 32, 0.25);
+  color: rgba(11, 18, 32, 0.9);
+}
+
+.btn-outline-dark:hover {
+  border-color: rgba(11, 18, 32, 0.10);
+  background: rgba(11, 18, 32, 0.06);
+}
+
+/* Cards */
+.card {
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(11, 18, 32, 0.08);
+  box-shadow: 0 14px 34px rgba(11, 18, 32, 0.08);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 22px 48px rgba(11, 18, 32, 0.14);
+}
+
+.card-img-top {
+  height: auto;
+  aspect-ratio: 4 / 5;
+}
+
+/* Forms */
+.form-control,
+.form-select {
+  border-radius: 14px;
+  border-color: rgba(11, 18, 32, 0.14);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: rgba(42, 108, 255, 0.55);
+  box-shadow: 0 0 0 0.25rem rgba(42, 108, 255, 0.14);
+}
+
+/* Home hero */
+.hero-section.hero-home {
+  background:
+    radial-gradient(900px 450px at 15% 30%, rgba(42, 108, 255, 0.20), rgba(0, 0, 0, 0) 60%),
+    radial-gradient(800px 420px at 80% 10%, rgba(0, 209, 178, 0.18), rgba(0, 0, 0, 0) 55%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.72));
+  border-bottom: 1px solid rgba(11, 18, 32, 0.06);
+}
+
+.hero-section.hero-home .display-5 {
+  font-family: "Fraunces", "Plus Jakarta Sans", serif;
+  letter-spacing: 0.2px;
+}
+
+.hero-section.hero-home img.img-fluid {
+  border-radius: 28px;
+  box-shadow: 0 24px 60px rgba(11, 18, 32, 0.18);
+}
+
+/* Gender tiles */
+.gender-tile {
+  border-radius: 26px;
+  box-shadow: 0 22px 58px rgba(11, 18, 32, 0.14);
+}
+
+.gender-tile img {
+  height: 320px;
+}
+
+.gender-label {
+  font-family: "Fraunces", "Plus Jakarta Sans", serif;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  padding: 1.2rem 1rem;
+}
+
+/* Subtle page entrance */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+main > * {
+  animation: fadeUp 0.35s ease both;
+}
+
+/* Mobile polish */
+@media (max-width: 768px) {
+  header {
+    background: rgba(255, 255, 255, 0.88);
+  }
+  .hero-section.hero-home img.img-fluid {
+    border-radius: 22px;
+  }
+  .gender-tile img {
+    height: 220px;
+  }
+}
