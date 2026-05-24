@@ -1,0 +1,39 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Hostinger via SSH
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.HOSTINGER_SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Hostinger server
+        env:
+          HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          HOSTINGER_PROJECT_PATH: ${{ secrets.HOSTINGER_PROJECT_PATH }}
+        run: |
+          set -e
+          echo "Deploying to Hostinger server $HOSTINGER_SSH_HOST"
+          ssh -o StrictHostKeyChecking=no -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" <<'EOF'
+          set -e
+          cd "$HOSTINGER_PROJECT_PATH"
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
+          git clean -fd
+          bash deploy.sh production
+          EOF
