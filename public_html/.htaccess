@@ -1,0 +1,35 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  
+  # Pass HTTP Authorization header to Django
+  RewriteCond %{HTTP:Authorization} ^(.*)
+  RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+  
+  # Redirect HTTP to HTTPS (uncomment for production)
+  # RewriteCond %{HTTPS} off
+  # RewriteCond %{HTTP_HOST} ^(.*)$
+  # RewriteRule ^(.*)$ https://%1$1 [R=301,L]
+  
+  # Prevent access to hidden files and directories
+  RewriteCond %{SCRIPT_FILENAME} -d [OR]
+  RewriteCond %{SCRIPT_FILENAME} -f
+  RewriteRule ^ - [L]
+  
+  # Handle static and media files first
+  RewriteCond %{REQUEST_URI} ^/(static|media)/ [L]
+  RewriteRule ^ - [L]
+  
+  # Pass remaining requests to Django
+  RewriteRule ^(.*)$ /index.html [QSA,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  # Security headers
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "DENY"
+  Header set X-XSS-Protection "1; mode=block"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  
+  # HSTS (use only if HTTPS is enabled)
+  Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+</IfModule>

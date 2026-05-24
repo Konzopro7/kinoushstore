@@ -1926,6 +1926,7 @@ def admin_traffic_dashboard(request):
 
 
 
+@require_POST
 def start_payment(request):
 
 
