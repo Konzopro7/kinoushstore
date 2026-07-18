@@ -13,16 +13,16 @@
 {% block content %}
 <section class="overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(255,0,255,0.16),_transparent_40%),_linear-gradient(180deg,_rgba(255,255,255,0.05),_rgba(0,0,0,0.8))] shadow-glow">
   <div class="relative isolate overflow-hidden">
-    <img src="{% static 'img/hero.jpg' %}" alt="Hero Kinoush Store" class="h-[560px] w-full object-cover object-center opacity-40 sm:opacity-70">
+    <img src="{% static 'img/hero.jpg' %}" alt="Sélection mode et parfums Kinoush Store" class="absolute inset-0 h-full w-full object-cover object-center opacity-40 sm:opacity-60">
     <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/90"></div>
-    <div class="relative mx-auto flex max-w-6xl flex-col gap-10 px-6 py-20 text-center text-white sm:px-10 lg:px-16 lg:text-left">
+    <div class="relative mx-auto flex min-h-[560px] max-w-6xl flex-col justify-end gap-10 px-6 py-16 text-center text-white sm:px-10 lg:px-16 lg:py-20 lg:text-left">
       <div class="max-w-2xl">
         <p class="mb-4 text-sm uppercase tracking-[0.35em] text-accent">Collection signature</p>
         <h1 class="font-display text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">Luxe moderne pour chaque instant.</h1>
         <p class="mt-6 max-w-xl text-base text-slate-200 sm:text-lg">Découvrez des parfums rares et des pièces d'habillement exclusives, présentées dans une ambiance noire intense et des reflets magenta.</p>
       </div>
       <div class="flex flex-col items-center justify-center gap-4 sm:flex-row sm:justify-start">
-        <a href="{% url 'shop:product_list' %}" class="inline-flex items-center justify-center rounded-full bg-accent px-8 py-3 text-sm font-semibold uppercase tracking-[0.25em] text-black shadow-glow transition hover:bg-accentDark">Shopping</a>
+        <a href="{% url 'shop:product_list' %}" class="inline-flex items-center justify-center rounded-full bg-accent px-8 py-3 text-sm font-semibold uppercase tracking-[0.25em] text-black shadow-glow transition hover:bg-accentDark hover:text-white">Découvrir la boutique</a>
         <a href="{% url 'shop:about' %}" class="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-8 py-3 text-sm font-semibold uppercase tracking-[0.25em] text-white transition hover:border-accent hover:text-accent">Notre univers</a>
       </div>
     </div>
@@ -72,10 +72,10 @@
     </a>
     <a href="{% url 'shop:product_list' %}" class="group overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/80 p-6 transition hover:-translate-y-1 hover:border-accent hover:bg-slate-900/90">
       <div class="mb-5 h-52 overflow-hidden rounded-[1.5rem] bg-white/5">
-        <img src="{% static 'img/accessoires.jpg' %}" alt="Accessoires" class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
+        <img src="{% static 'img/parfums.jpg' %}" alt="Parfums et accessoires" class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
       </div>
       <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Collection</p>
-      <h3 class="mt-4 text-2xl font-semibold text-white">Accessoires</h3>
+      <h3 class="mt-4 text-2xl font-semibold text-white">Parfums & accessoires</h3>
     </a>
   </div>
 </section>

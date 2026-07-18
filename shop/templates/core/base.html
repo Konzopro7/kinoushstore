@@ -22,33 +22,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            surface: '#F9F9F9',
-            accent: '#FF00FF',
-            accentSoft: '#F9D6FF',
-            accentDark: '#C300C3',
-            bg: '#000000',
-            panel: '#121212'
-          },
-          fontFamily: {
-            body: ['Manrope', 'sans-serif'],
-            display: ['Playfair Display', 'serif'],
-          },
-          boxShadow: {
-            glow: '0 25px 80px rgba(255, 0, 255, 0.18)',
-          }
-        }
-      }
-    }
-  </script>
   <link rel="icon" href="{% static 'img/favicon.ico' %}" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32.png' %}">
   <link rel="apple-touch-icon" href="{% static 'img/favicon-32.png' %}">
+  <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   {% block extra_head %}{% endblock %}
   {% with base_url=request.scheme|add:"://"|add:request.get_host %}
@@ -72,6 +49,7 @@
   {% endwith %}
 </head>
 <body class="min-h-screen bg-black text-slate-100 antialiased selection:bg-accent selection:text-black">
+  <a href="#main-content" class="sr-only z-[100] rounded-full bg-white px-5 py-3 text-black focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Aller au contenu</a>
   <div class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/70 backdrop-blur-xl">
     <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
       <a href="{% url 'shop:home' %}" class="flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.35em] text-white">
@@ -86,8 +64,9 @@
         <a href="{% url 'shop:contact' %}" class="text-sm uppercase tracking-[0.25em] text-slate-200 transition hover:text-accent">Contact</a>
       </div>
       <div class="flex items-center gap-3">
-        <a href="{% url 'shop:cart_detail' %}" class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:border-accent hover:bg-white/10">Panier</a>
-        <button id="menu-toggle" aria-label="Menu" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition hover:border-accent hover:bg-white/10 md:hidden">
+        {% if request.user.is_authenticated %}<a href="{% url 'account' %}" class="hidden px-3 py-2 text-sm text-slate-300 transition hover:text-white sm:inline-flex">Mon compte</a>{% else %}<a href="{% url 'login' %}" class="hidden px-3 py-2 text-sm text-slate-300 transition hover:text-white sm:inline-flex">Connexion</a>{% endif %}
+        <a href="{% url 'shop:cart_detail' %}" class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:border-accent hover:bg-white/10">Panier{% if cart_item_count %} <span class="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-accent px-1.5 py-0.5 text-xs font-bold text-black">{{ cart_item_count }}</span>{% endif %}</a>
+        <button id="menu-toggle" type="button" aria-label="Ouvrir le menu" aria-controls="mobile-menu" aria-expanded="false" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition hover:border-accent hover:bg-white/10 md:hidden">
           <span class="text-lg">☰</span>
         </button>
       </div>
@@ -99,10 +78,11 @@
         <a href="{% url 'shop:about' %}" class="rounded-3xl px-4 py-3 text-sm uppercase tracking-[0.25em] text-slate-200 transition hover:bg-white/5 hover:text-accent">À propos</a>
         <a href="{% url 'shop:faq' %}" class="rounded-3xl px-4 py-3 text-sm uppercase tracking-[0.25em] text-slate-200 transition hover:bg-white/5 hover:text-accent">FAQ</a>
         <a href="{% url 'shop:contact' %}" class="rounded-3xl px-4 py-3 text-sm uppercase tracking-[0.25em] text-slate-200 transition hover:bg-white/5 hover:text-accent">Contact</a>
+        {% if request.user.is_authenticated %}<a href="{% url 'account' %}" class="rounded-3xl px-4 py-3 text-sm uppercase tracking-[0.25em] text-slate-200 transition hover:bg-white/5 hover:text-accent">Mon compte</a>{% else %}<a href="{% url 'login' %}" class="rounded-3xl px-4 py-3 text-sm uppercase tracking-[0.25em] text-slate-200 transition hover:bg-white/5 hover:text-accent">Connexion</a>{% endif %}
       </div>
     </div>
   </div>
-  <main class="pt-28">
+  <main id="main-content" class="pt-28">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       {% if messages %}
         <div class="space-y-3 pb-6">
@@ -135,6 +115,9 @@
     const mobileMenu = document.getElementById('mobile-menu');
     toggle?.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
+      const isOpen = !mobileMenu.classList.contains('hidden');
+      toggle.setAttribute('aria-expanded', String(isOpen));
+      toggle.setAttribute('aria-label', isOpen ? 'Fermer le menu' : 'Ouvrir le menu');
     });
   </script>
 </body>
