@@ -48,7 +48,7 @@ class StripeTests(TestCase):
         OrderItem.objects.create(order=self.order, product=self.product, price=Decimal("10.00"), quantity=2)
 
     @patch("shop.views.stripe.PaymentIntent.create")
-    def test_create_payment_intent(self, mock_create):
+    def test_create_payment_intent(self, mock_create):
         mock_create.return_value = type(
             "Intent",
             (),
@@ -61,7 +61,23 @@ class StripeTests(TestCase):
         session.save()
         response = self.client.post(url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json().get("clientSecret"), "secret_test")
+        self.assertEqual(response.json().get("clientSecret"), "secret_test")
+
+    @override_settings(
+        DEBUG=False,
+        STRIPE_PAYMENT_ENABLED=False,
+        STRIPE_LIVE_MODE=False,
+        STRIPE_PUBLISHABLE_KEY="pk_test_example",
+        STRIPE_SECRET_KEY="sk_test_example",
+    )
+    def test_test_keys_are_disabled_in_production(self):
+        session = self.client.session
+        session["order_references"] = [self.order.reference]
+        session.save()
+        response = self.client.post(
+            reverse("shop:create_payment_intent", args=[self.order.reference])
+        )
+        self.assertEqual(response.status_code, 503)
 
     @override_settings(STRIPE_WEBHOOK_SECRET="whsec_test", STRIPE_SECRET_KEY="sk_test")
     @patch("shop.views.stripe.Webhook.construct_event")

@@ -2037,12 +2037,8 @@ def payment_page(request, reference):
 
 
         "total": total,
-
-
-
-
-
-        "stripe_publishable_key": settings.STRIPE_PUBLISHABLE_KEY,
+        "stripe_publishable_key": settings.STRIPE_PUBLISHABLE_KEY if settings.STRIPE_PAYMENT_ENABLED else "",
+        "stripe_payment_enabled": settings.STRIPE_PAYMENT_ENABLED,
 
 
 
@@ -2877,6 +2873,12 @@ def create_payment_intent(request, reference):
     order = get_object_or_404(Order, reference=reference)
     if not authorize_order(request, order):
         return JsonResponse({"error": "order not found"}, status=404)
+
+    if not settings.STRIPE_PAYMENT_ENABLED:
+        return JsonResponse(
+            {"error": "Le paiement par carte est temporairement indisponible."},
+            status=503,
+        )
 
 
 
