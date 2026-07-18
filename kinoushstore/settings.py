@@ -200,13 +200,6 @@ else:
     }
 
 if not DEBUG:
-    if not USE_CLOUDINARY:
-        import warnings
-        warnings.warn(
-            "Production without Cloudinary may result in lost media uploads on stateless deployments. "
-            "Set CLOUDINARY_URL or CLOUDINARY_CLOUD_NAME + CLOUDINARY_API_KEY + CLOUDINARY_API_SECRET.",
-            RuntimeWarning
-        )
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "true").lower() == "true"
     SESSION_COOKIE_SECURE = True

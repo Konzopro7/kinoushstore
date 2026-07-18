@@ -71,7 +71,7 @@ bash deploy.sh
 - `STRIPE_WEBHOOK_SECRET` - Webhook signing secret
 
 **Optional:**
-- `CLOUDINARY_URL` or `CLOUDINARY_CLOUD_NAME` + `CLOUDINARY_API_KEY` + `CLOUDINARY_API_SECRET` - For media storage
+- `CLOUDINARY_URL` or `CLOUDINARY_CLOUD_NAME` + `CLOUDINARY_API_KEY` + `CLOUDINARY_API_SECRET` - For media storage on stateless hosting. Hostinger VPS uses persistent local media storage when these variables are omitted.
 - `INDEXNOW_KEY` - For search engine indexing
 
 ## Files
