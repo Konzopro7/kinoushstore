@@ -14,6 +14,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Validate deployment configuration
+        env:
+          HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          HOSTINGER_PROJECT_PATH: ${{ secrets.HOSTINGER_PROJECT_PATH }}
+        run: |
+          set -e
+          test -n "$HOSTINGER_SSH_USER" || { echo "HOSTINGER_SSH_USER is missing"; exit 1; }
+          test -n "$HOSTINGER_SSH_HOST" || { echo "HOSTINGER_SSH_HOST is missing"; exit 1; }
+          test -n "$HOSTINGER_SSH_PORT" || { echo "HOSTINGER_SSH_PORT is missing"; exit 1; }
+          test -n "$HOSTINGER_PROJECT_PATH" || { echo "HOSTINGER_PROJECT_PATH is missing"; exit 1; }
+
       - name: Set up SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
@@ -28,12 +41,7 @@ jobs:
         run: |
           set -e
           echo "Deploying to Hostinger server $HOSTINGER_SSH_HOST"
-          ssh -o StrictHostKeyChecking=no -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" <<'EOF'
-          set -e
-          cd "$HOSTINGER_PROJECT_PATH"
-          git fetch origin main
-          git checkout main
-          git reset --hard origin/main
-          git clean -fd
-          bash deploy.sh production
-          EOF
+          printf -v remote_path '%q' "$HOSTINGER_PROJECT_PATH"
+          ssh -o StrictHostKeyChecking=no -p "$HOSTINGER_SSH_PORT" \
+            "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" \
+            "cd $remote_path && git fetch origin main && git checkout main && git reset --hard origin/main && git clean -fd && bash deploy.sh production"
