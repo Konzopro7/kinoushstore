@@ -139,8 +139,8 @@ class SiteVisit(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["created_at"]),
-            models.Index(fields=["path"]),
+            models.Index(fields=["created_at"], name="shop_sitevi_created_9f2f09_idx"),
+            models.Index(fields=["path"], name="shop_sitevi_path_3e63c4_idx"),
         ]
         ordering = ["-created_at"]
 

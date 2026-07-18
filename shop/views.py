@@ -75,6 +75,7 @@ from django.http import JsonResponse
 
 
 from .models import Product, Category, Order, OrderItem, NewsletterSubscriber, SiteVisit
+from .services import authorize_order, create_order_from_cart, mark_order_paid, remember_order
 
 
 
@@ -590,6 +591,10 @@ def add_to_cart(request, product_id):
 
     product = get_object_or_404(Product, id=product_id)
 
+    if product.stock < 1:
+        messages.error(request, "Ce produit est actuellement en rupture de stock.")
+        return redirect("shop:product_detail", slug=product.slug)
+
 
 
 
@@ -632,6 +637,8 @@ def add_to_cart(request, product_id):
 
         qty = 1
 
+    qty = min(qty, product.stock)
+
 
 
 
@@ -661,6 +668,8 @@ def add_to_cart(request, product_id):
 
 
         cart[pid]["quantity"] += qty
+
+        cart[pid]["quantity"] = min(cart[pid]["quantity"], product.stock)
 
 
 
@@ -1065,6 +1074,10 @@ def cart_detail(request):
 
 
 def checkout(request):
+
+    # Keep the historical POST endpoint safe; the template posts to start_payment.
+    if request.method == "POST":
+        return start_payment(request)
 
 
 
@@ -1512,6 +1525,9 @@ def checkout(request):
 
 
 def order_success(request, reference):
+    order = get_object_or_404(Order, reference=reference)
+    if not authorize_order(request, order):
+        return HttpResponse(status=404)
 
 
 
@@ -1928,322 +1944,29 @@ def admin_traffic_dashboard(request):
 
 @require_POST
 def start_payment(request):
-
-
-
-
-
-
-
     cart = request.session.get("cart", {})
-
-
-
-
-
-
-
     if not cart:
-
-
-
-
-
-
-
         messages.error(request, "Votre panier est vide.")
-
-
-
-
-
-
-
         return redirect("shop:cart_detail")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    if request.method != "POST":
-
-
-
-
-
-
-
-        return redirect("shop:checkout")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    email = request.POST.get("email", "").strip()
-
-
-
-
-
-    first_name = request.POST.get("first_name", "").strip()
-
-
-
-
-
-    last_name = request.POST.get("last_name", "").strip()
-
-
-
-
-
-    address = request.POST.get("address", "").strip()
-
-
-
-
-
-    city = request.POST.get("city", "").strip()
-
-
-
-
-
-    phone = request.POST.get("phone", "").strip()
-    shipping_fee = _parse_shipping_fee(request.POST.get("shipping_fee", "10.00"))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    if not email:
-
-
-
-
-
-
-
-        messages.error(request, "Veuillez entrer un email.")
-
-
-
-
-
-
-
-        return redirect("shop:checkout")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    order = Order.objects.create(
-
-
-
-
-
-        user=None,
-
-
-
-
-
-        email=email,
-
-
-
-
-
-        first_name=first_name,
-
-
-
-
-
-        last_name=last_name,
-
-
-
-
-
-        address=address,
-
-
-
-
-
-        city=city,
-
-
-
-
-
-        phone=phone,
-        shipping_fee=shipping_fee,
-
-
-
-
-
-        status=Order.STATUS_PENDING,
-
-
-
-
-
-    )
-
-
-
-
-
-
-
-
-
-
-
-
-
-    for pid, item in cart.items():
-
-
-
-
-
-
-
-        product = Product.objects.filter(id=int(pid)).first()
-
-
-
-
-
-
-
-        if not product:
-
-
-
-
-
-
-
-            continue
-
-
-
-
-
-
-
-        OrderItem.objects.create(
-
-
-
-
-
-            order=order,
-
-
-
-
-
-            product=product,
-
-
-
-
-
-            price=Decimal(str(item["price"])),
-
-
-
-
-
-            quantity=int(item["quantity"]),
-
-
-
-
-
+    customer = {
+        field: request.POST.get(field, "").strip()
+        for field in ("email", "first_name", "last_name", "address", "city", "phone")
+    }
+    try:
+        validate_email(customer["email"])
+        order = create_order_from_cart(
+            cart=cart,
+            user=request.user,
+            customer=customer,
+            shipping_fee=_parse_shipping_fee(request.POST.get("shipping_fee", "10.00")),
         )
+    except ValidationError as exc:
+        messages.error(request, exc.messages[0])
+        return redirect("shop:checkout")
 
-
-
-
-
-
-
-
-
-
-
-
-
+    remember_order(request, order)
     return redirect("shop:payment_page", reference=order.reference)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def payment_page(request, reference):
@@ -2253,6 +1976,8 @@ def payment_page(request, reference):
 
 
     order = get_object_or_404(Order, reference=reference)
+    if not authorize_order(request, order):
+        return HttpResponse(status=404)
 
 
 
@@ -2511,11 +2236,19 @@ def payment_success(request):
 
     order = Order.objects.filter(reference=ref).first()
 
+    if order and not authorize_order(request, order):
+        return HttpResponse(status=404)
+
 
 
 
 
     if order and intent.status == "succeeded":
+        try:
+            order = mark_order_paid(order_reference=ref, payment_intent=intent.id)
+        except ValidationError:
+            messages.error(request, "Stock insuffisant : veuillez contacter la boutique.")
+            return redirect("shop:payment_page", reference=ref)
 
 
 
@@ -2812,6 +2545,14 @@ def stripe_webhook(request):
 
 
         if order_ref:
+            try:
+                mark_order_paid(
+                    order_reference=order_ref,
+                    payment_intent=intent.get("id", "") or "",
+                )
+            except ValidationError:
+                logger.exception("Stock insuffisant pour la commande %s", order_ref)
+                return HttpResponse(status=409)
 
 
 
@@ -2890,6 +2631,14 @@ def stripe_webhook(request):
 
 
         if order_ref:
+            try:
+                mark_order_paid(
+                    order_reference=order_ref,
+                    payment_intent=payment_intent or "",
+                )
+            except ValidationError:
+                logger.exception("Stock insuffisant pour la commande %s", order_ref)
+                return HttpResponse(status=409)
 
 
 
@@ -3126,6 +2875,8 @@ def create_payment_intent(request, reference):
 
 
     order = get_object_or_404(Order, reference=reference)
+    if not authorize_order(request, order):
+        return JsonResponse({"error": "order not found"}, status=404)
 
 
 

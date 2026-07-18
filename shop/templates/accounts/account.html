@@ -166,7 +166,9 @@
 
 
 
-  <a href="{% url 'logout' %}" class="btn btn-outline-danger">
+  <form method="post" action="{% url 'logout' %}" class="d-inline">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-danger">
 
 
 
@@ -182,7 +184,8 @@
 
 
 
-  </a>
+    </button>
+  </form>
 
 
 

@@ -10,7 +10,8 @@ venv/
 .env
 .env.*
 media/
-staticfiles/
+staticfiles/*
+!staticfiles/.gitkeep
 dist/
 build/
 node_modules/
