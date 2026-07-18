@@ -34,10 +34,15 @@ python manage.py collectstatic --noinput --clear
 echo "🔄 Running migrations..."
 python manage.py migrate --noinput
 
-# Step 5: Restart application (if using Passenger/cPanel)
-if [ -f "$PROJECT_ROOT/tmp/restart.txt" ]; then
+# Step 5: Restart application
+if command -v systemctl >/dev/null 2>&1 && systemctl is-enabled kinoushstore.service >/dev/null 2>&1; then
+    echo "Restarting kinoushstore.service..."
+    systemctl restart kinoushstore.service
+elif [ -f "$PROJECT_ROOT/tmp/restart.txt" ]; then
     touch "$PROJECT_ROOT/tmp/restart.txt"
     echo "✅ Touched tmp/restart.txt to restart Passenger"
+else
+    echo "No supported application service was found; restart skipped."
 fi
 
 echo "✅ Deployment completed successfully!"
