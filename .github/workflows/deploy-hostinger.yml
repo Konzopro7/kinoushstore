@@ -43,7 +43,8 @@ jobs:
           set -e
           echo "Deploying to Hostinger server $HOSTINGER_SSH_HOST"
           printf -v remote_path '%q' "$HOSTINGER_PROJECT_PATH"
-          ssh -4 -o BatchMode=yes -o ConnectTimeout=20 -o StrictHostKeyChecking=no \
+          ssh -4 -o BatchMode=yes -o ConnectTimeout=20 -o ConnectionAttempts=5 \
+            -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o StrictHostKeyChecking=no \
             -p "$HOSTINGER_SSH_PORT" \
             "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" \
             "cd $remote_path && git fetch origin main && git checkout main && git reset --hard origin/main && git clean -fd && bash deploy.sh production"
