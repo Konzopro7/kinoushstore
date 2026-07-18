@@ -3170,16 +3170,39 @@ def contact(request):
         or "contact@kinoushstore.com"
     )
     client_phone = "+1 (819) 209-8271"
+    form_data = {}
 
     if request.method == "POST":
         first_name = request.POST.get("first_name", "").strip()
         last_name = request.POST.get("last_name", "").strip()
         email = request.POST.get("email", "").strip()
         message = request.POST.get("message", "").strip()
+        form_data = {
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "message": message,
+        }
 
+        if request.POST.get("website", "").strip():
+            return redirect("shop:contact")
         if not all([first_name, last_name, email, message]):
             messages.error(request, "Veuillez remplir tous les champs.")
+        elif len(first_name) > 100 or len(last_name) > 100 or len(message) > 3000:
+            messages.error(request, "Un ou plusieurs champs dépassent la longueur autorisée.")
+        elif len(message) < 10:
+            messages.error(request, "Votre message doit contenir au moins 10 caractères.")
         else:
+            try:
+                validate_email(email)
+            except ValidationError:
+                messages.error(request, "Veuillez saisir une adresse e-mail valide.")
+                return render(request, "shop/contact.html", {
+                    "client_email": client_email,
+                    "client_phone": client_phone,
+                    "form_data": form_data,
+                })
+
             subject = f"Nouveau message - {first_name} {last_name}"
             body = (
                 f"Nom: {first_name} {last_name}\n"
@@ -3188,20 +3211,15 @@ def contact(request):
             )
             try:
                 from_email = settings.EMAIL_HOST_USER or settings.DEFAULT_FROM_EMAIL or client_email
-                try:
-                    validate_email(email)
-                    reply_to = [email]
-                except ValidationError:
-                    reply_to = []
                 msg = EmailMessage(
                     subject=subject,
                     body=body,
                     from_email=from_email,
                     to=[client_email],
-                    reply_to=reply_to,
+                    reply_to=[email],
                 )
                 msg.send(fail_silently=False)
-                messages.success(request, "Merci ! Votre message a ete envoye.")
+                messages.success(request, "Merci ! Votre message a été envoyé.")
                 return redirect("shop:contact")
             except Exception:
                 logger.exception(
@@ -3212,11 +3230,12 @@ def contact(request):
                 )
                 messages.error(
                     request,
-                    "Impossible d'envoyer le message pour le moment. Reessayez plus tard.",
+                    "Impossible d'envoyer le message pour le moment. Réessayez plus tard.",
                 )
 
     return render(request, "shop/contact.html", {
         "client_email": client_email,
         "client_phone": client_phone,
+        "form_data": form_data,
     })
 

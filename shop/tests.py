@@ -4,6 +4,7 @@ from unittest.mock import patch
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.core import mail
 
 from .models import Category, Order, OrderItem, Product
 
@@ -168,4 +169,43 @@ class AccountTests(TestCase):
     def test_account_requires_login(self):
         response = self.client.get(reverse("account"))
         self.assertRedirects(response, f"{reverse('login')}?next={reverse('account')}")
+
+
+@override_settings(
+    EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    CONTACT_EMAIL="contact@example.com",
+)
+class ContactTests(TestCase):
+    def test_contact_sends_valid_message(self):
+        response = self.client.post(reverse("shop:contact"), {
+            "first_name": "Awa",
+            "last_name": "Diallo",
+            "email": "awa@example.com",
+            "message": "Bonjour, je souhaite obtenir des informations.",
+        })
+        self.assertRedirects(response, reverse("shop:contact"))
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].reply_to, ["awa@example.com"])
+
+    def test_contact_rejects_invalid_email(self):
+        response = self.client.post(reverse("shop:contact"), {
+            "first_name": "Awa",
+            "last_name": "Diallo",
+            "email": "adresse-invalide",
+            "message": "Ceci est un message suffisamment long.",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(mail.outbox, [])
+        self.assertContains(response, "adresse e-mail valide")
+
+    def test_contact_honeypot_silently_rejects_spam(self):
+        response = self.client.post(reverse("shop:contact"), {
+            "first_name": "Robot",
+            "last_name": "Spam",
+            "email": "spam@example.com",
+            "message": "Ceci est un message automatisé indésirable.",
+            "website": "https://spam.example",
+        })
+        self.assertRedirects(response, reverse("shop:contact"))
+        self.assertEqual(mail.outbox, [])
 

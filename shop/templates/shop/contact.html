@@ -1,623 +1,78 @@
-﻿{% extends "core/base.html" %}
-
-
-
-
-
-
-
-{% load static %}
-
-
-
-
-
-
-
+{% extends "core/base.html" %}
 {% block title %}Contact - Kinoush Store{% endblock %}
-{% block meta_description %}Besoin d'aide ? Contactez Kinoush Store pour vos questions sur la boutique, les produits et les commandes.{% endblock %}
+{% block meta_description %}Une question sur un produit ou une commande ? Contactez l’équipe Kinoush Store. Nous vous répondons rapidement.{% endblock %}
 {% block og_title %}Contact - Kinoush Store{% endblock %}
 {% block twitter_title %}Contact - Kinoush Store{% endblock %}
-{% block og_description %}Besoin d'aide ? Contactez Kinoush Store pour vos questions sur la boutique, les produits et les commandes.{% endblock %}
-{% block twitter_description %}Besoin d'aide ? Contactez Kinoush Store pour vos questions sur la boutique, les produits et les commandes.{% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+{% block og_description %}Une question sur un produit ou une commande ? Contactez l’équipe Kinoush Store. Nous vous répondons rapidement.{% endblock %}
+{% block twitter_description %}Une question sur un produit ou une commande ? Contactez l’équipe Kinoush Store. Nous vous répondons rapidement.{% endblock %}
 
 {% block content %}
-
-
-
-
-
-
-
-<section class="py-5 bg-light">
-
-
-
-
-
-
-
-  <div class="container" style="max-width: 1000px;">
-
-
-
-
-
-
-
-    <div class="row g-4 align-items-stretch">
-
-
-
-
-
-
-
-      <div class="col-lg-6">
-
-
-
-
-
-
-
-        <div class="p-4 bg-white rounded shadow-sm h-100">
-
-
-
-
-
-
-
-          <h1 class="h4 mb-3">Contact</h1>
-
-
-
-
-
-
-
-          <p class="text-muted">Une question ? Écris-nous et on te répond rapidement.</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          <div class="mt-4">
-
-
-
-
-
-
-
-            <div class="d-flex align-items-center gap-2 mb-2">
-
-
-
-
-
-
-
-              <strong>Email :</strong>
-
-
-
-
-
-
-
-              <a href="mailto:{{ client_email }}">{{ client_email }}</a>
-
-
-
-
-
-            </div>
-
-
-
-
-
-
-
-            <div class="d-flex align-items-center gap-2 mb-2">
-
-
-
-
-
-
-
-              <strong>Téléphone :</strong>
-
-
-
-
-
-
-
-              <a href="tel:+18192098271">+1 (819) 209-8271</a>
-
-
-
-
-
-
-
-            </div>
-
-
-
-
-
-
-
-          </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          <hr class="my-4">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          <h6 class="mb-3">Réseaux sociaux</h6>
-
-
-
-
-
-
-
-          <div class="d-flex flex-wrap gap-3">
-
-
-
-
-
-
-
-            <a class="btn btn-outline-dark btn-sm" href="https://www.instagram.com/beckkassethiam?igsh=ZTNna2hkZ3piYWJn&utm_source=qr" target="_blank">Instagram</a>
-
-
-
-
-
-
-
-            <a class="btn btn-outline-dark btn-sm" href="https://www.tiktok.com/@niki4five?_r=1&_t=ZS-91UHhMrZpVC" target="_blank">TikTok</a>
-
-
-
-
-
-
-
-            <a class="btn btn-outline-dark btn-sm" href="https://www.facebook.com/share/19CaR8VwqN/?mibextid=wwXIfr" target="_blank">Facebook</a>
-
-
-
-
-
-
-
-            <a class="btn btn-outline-dark btn-sm" href="mailto:{{ client_email }}">Mail</a>
-
-
-
-
-
-            <a class="btn btn-outline-dark btn-sm" href="https://snapchat.com/t/0WbpiaLX" target="_blank">Snapchat</a>
-
-
-
-
-
-
-
-          </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          <p class="small text-muted mt-3 mb-0">
-
-
-
-
-
-
-
-          </p>
-
-
-
-
-
-
-
-        </div>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <div class="col-lg-6">
-
-
-
-
-
-
-
-        <div class="p-4 bg-white rounded shadow-sm h-100">
-
-
-
-
-
-
-
-          <h2 class="h5 mb-3">Envoyer un message</h2>
-
-
-
-
-
-
-
-          <form method="post" action="{% url 'shop:contact' %}">
-            {% csrf_token %}
-
-
-
-
-
-
-
-            <div class="row g-3">
-
-
-
-
-
-
-
-              <div class="col-md-6">
-
-
-
-
-
-
-
-                <label class="form-label">Prénom</label>
-
-
-
-
-
-
-
-                <input class="form-control" type="text" name="first_name" placeholder="Votre prénom" required>
-
-
-
-
-
-
-
-              </div>
-
-
-
-
-
-
-
-              <div class="col-md-6">
-
-
-
-
-
-
-
-                <label class="form-label">Nom</label>
-
-
-
-
-
-
-
-                <input class="form-control" type="text" name="last_name" placeholder="Votre nom" required>
-
-
-
-
-
-
-
-              </div>
-
-
-
-
-
-
-
-              <div class="col-12">
-
-
-
-
-
-
-
-                <label class="form-label">Email</label>
-
-
-
-
-
-
-
-                <input class="form-control" type="email" name="email" placeholder="ex: client@gmail.com" required>
-
-
-
-
-
-
-
-              </div>
-
-
-
-
-
-
-
-              <div class="col-12">
-
-
-
-
-
-
-
-                <label class="form-label">Message</label>
-
-
-
-
-
-
-
-                <textarea class="form-control" rows="5" name="message" placeholder="Votre message..." required></textarea>
-
-
-
-
-
-
-
-              </div>
-
-
-
-
-
-
-
-              <div class="col-12">
-
-
-
-
-
-
-
-                <button class="btn btn-dark w-100" type="submit">
-
-
-
-
-
-
-
-                  Envoyer
-
-
-
-
-
-
-
-                </button>
-
-
-
-
-
-
-
-                <p class="small text-muted mt-2 mb-0">
-
-
-
-
-
-
-
-                </p>
-
-
-
-
-
-
-
-              </div>
-
-
-
-
-
-
-
-            </div>
-
-
-
-
-
-
-
-          </form>
-
-
-
-
-
-
-
-        </div>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<section class="pb-20 pt-4">
+  <div class="overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_top_left,_rgba(255,79,184,0.14),_transparent_38%),_rgba(15,12,17,0.92)] shadow-glow">
+    <div class="border-b border-white/10 px-6 py-10 sm:px-10 lg:px-12">
+      <p class="text-xs font-semibold uppercase tracking-[0.35em] text-accent">Nous contacter</p>
+      <h1 class="mt-4 max-w-3xl font-display text-4xl font-semibold leading-tight text-white sm:text-5xl">Une question ? Notre équipe est à votre écoute.</h1>
+      <p class="mt-5 max-w-2xl text-base leading-7 text-slate-300">Produit, livraison ou suivi de commande : écrivez-nous et nous vous répondrons dans les meilleurs délais.</p>
     </div>
 
+    <div class="grid lg:grid-cols-[0.8fr_1.2fr]">
+      <aside class="border-b border-white/10 p-6 sm:p-10 lg:border-b-0 lg:border-r lg:p-12" aria-label="Coordonnées">
+        <div class="space-y-8">
+          <div>
+            <p class="text-xs uppercase tracking-[0.3em] text-slate-500">E-mail</p>
+            <a href="mailto:{{ client_email }}" class="mt-2 block break-all text-lg font-semibold text-white transition hover:text-accent">{{ client_email }}</a>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Téléphone</p>
+            <a href="tel:{{ client_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}" class="mt-2 block text-lg font-semibold text-white transition hover:text-accent">{{ client_phone }}</a>
+          </div>
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-5">
+            <p class="font-semibold text-white">Délai de réponse</p>
+            <p class="mt-2 text-sm leading-6 text-slate-400">Habituellement sous 24 à 48 heures ouvrables.</p>
+          </div>
+        </div>
 
+        <div class="mt-10">
+          <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Suivez-nous</p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <a href="https://www.instagram.com/beckkassethiam" target="_blank" rel="noopener noreferrer" class="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-200 transition hover:border-accent hover:text-accent">Instagram</a>
+            <a href="https://www.tiktok.com/@niki4five" target="_blank" rel="noopener noreferrer" class="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-200 transition hover:border-accent hover:text-accent">TikTok</a>
+            <a href="https://www.facebook.com/share/19CaR8VwqN/" target="_blank" rel="noopener noreferrer" class="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-200 transition hover:border-accent hover:text-accent">Facebook</a>
+            <a href="https://snapchat.com/t/0WbpiaLX" target="_blank" rel="noopener noreferrer" class="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-200 transition hover:border-accent hover:text-accent">Snapchat</a>
+          </div>
+        </div>
+      </aside>
 
+      <div class="p-6 sm:p-10 lg:p-12">
+        <h2 class="text-2xl font-semibold text-white">Envoyer un message</h2>
+        <p class="mt-2 text-sm text-slate-400">Tous les champs sont obligatoires.</p>
 
-
-
-
+        <form method="post" action="{% url 'shop:contact' %}" class="mt-8 space-y-5">
+          {% csrf_token %}
+          <div class="hidden" aria-hidden="true"><label for="website">Site web</label><input id="website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label for="first_name" class="mb-2 block text-sm font-medium text-slate-200">Prénom</label>
+              <input id="first_name" name="first_name" type="text" value="{{ form_data.first_name|default:'' }}" maxlength="100" autocomplete="given-name" required class="w-full rounded-2xl border-white/10 bg-black/40 px-4 py-3 text-white placeholder:text-slate-600 focus:border-accent" placeholder="Votre prénom">
+            </div>
+            <div>
+              <label for="last_name" class="mb-2 block text-sm font-medium text-slate-200">Nom</label>
+              <input id="last_name" name="last_name" type="text" value="{{ form_data.last_name|default:'' }}" maxlength="100" autocomplete="family-name" required class="w-full rounded-2xl border-white/10 bg-black/40 px-4 py-3 text-white placeholder:text-slate-600 focus:border-accent" placeholder="Votre nom">
+            </div>
+          </div>
+          <div>
+            <label for="email" class="mb-2 block text-sm font-medium text-slate-200">Adresse e-mail</label>
+            <input id="email" name="email" type="email" value="{{ form_data.email|default:'' }}" maxlength="254" autocomplete="email" inputmode="email" required class="w-full rounded-2xl border-white/10 bg-black/40 px-4 py-3 text-white placeholder:text-slate-600 focus:border-accent" placeholder="vous@exemple.com">
+          </div>
+          <div>
+            <label for="message" class="mb-2 block text-sm font-medium text-slate-200">Message</label>
+            <textarea id="message" name="message" rows="7" minlength="10" maxlength="3000" required class="w-full resize-y rounded-2xl border-white/10 bg-black/40 px-4 py-3 text-white placeholder:text-slate-600 focus:border-accent" placeholder="Comment pouvons-nous vous aider ?">{{ form_data.message|default:'' }}</textarea>
+            <p class="mt-2 text-xs text-slate-500">10 à 3 000 caractères.</p>
+          </div>
+          <button type="submit" class="inline-flex w-full items-center justify-center rounded-full bg-accent px-7 py-4 text-sm font-semibold uppercase tracking-[0.22em] text-black shadow-glow transition hover:bg-accentDark hover:text-white sm:w-auto">Envoyer le message</button>
+        </form>
+      </div>
+    </div>
   </div>
-
-
-
-
-
-
-
 </section>
-
-
-
-
-
-
-
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
