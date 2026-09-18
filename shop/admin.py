@@ -2,7 +2,7 @@ from django.contrib import admin, messages
 from django.utils import timezone
 
 from .emails import email_delivered, email_shipped
-from .models import Category, Order, OrderItem, NewsletterSubscriber, Product, SiteVisit
+from .models import Category, Order, OrderItem, NewsletterSubscriber, Product, ProductVariant, SiteVisit
 
 
 @admin.register(Category)
@@ -13,6 +13,12 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
+class ProductVariantInline(admin.TabularInline):
+    model = ProductVariant
+    extra = 1
+    fields = ("name", "sku", "price_adjustment", "stock", "image", "is_active")
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ("title", "category", "price", "stock", "gender", "is_featured")
@@ -20,6 +26,7 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ("title", "slug")
     prepopulated_fields = {"slug": ("title",)}
     list_select_related = ("category",)
+    inlines = [ProductVariantInline]
 
 
 class OrderItemInline(admin.TabularInline):

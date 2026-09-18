@@ -82,7 +82,7 @@
       </div>
     </div>
   </div>
-  <main id="main-content" class="pt-28">
+  <main id="main-content" class="{% block main_classes %}pt-28{% endblock %}">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       {% if messages %}
         <div class="space-y-3 pb-6">

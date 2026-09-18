@@ -6,9 +6,9 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.core import mail
 
-from .models import Category, Order, OrderItem, Product
+from .models import Category, Order, OrderItem, Product, ProductVariant
 
-class CartTests(TestCase):
+class CartTests(TestCase):
     def setUp(self):
         self.category = Category.objects.create(name="Cat")
         self.product = Product.objects.create(
@@ -33,7 +33,28 @@ class CartTests(TestCase):
         self.client.post(reverse("shop:add_to_cart", args=[self.product.id]), {"quantity": 1})
         response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
-        self.assertNotIn(str(self.product.id), self.client.session.get("cart", {}))
+        self.assertNotIn(str(self.product.id), self.client.session.get("cart", {}))
+
+    def test_variant_is_stored_as_a_distinct_cart_line(self):
+        variant = ProductVariant.objects.create(
+            product=self.product, name="Noir · 100 ml", stock=4, price_adjustment=Decimal("5.00")
+        )
+        response = self.client.post(
+            reverse("shop:add_to_cart", args=[self.product.id]), {"variant_id": variant.id, "quantity": 2}
+        )
+        self.assertRedirects(response, reverse("shop:cart_detail"))
+        item = self.client.session["cart"][f"{self.product.id}:{variant.id}"]
+        self.assertEqual(item["variant_name"], "Noir · 100 ml")
+        self.assertEqual(item["price"], "17.34")
+
+    def test_cart_removes_stale_product_without_an_error_page(self):
+        session = self.client.session
+        session["cart"] = {"999999": {"product_id": 999999, "quantity": 1, "price": "12.00"}}
+        session.save()
+        response = self.client.get(reverse("shop:cart_detail"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Panier vide")
+        self.assertEqual(self.client.session["cart"], {})
 
 
 class StripeTests(TestCase):

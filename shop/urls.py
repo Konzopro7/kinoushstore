@@ -12,7 +12,8 @@ urlpatterns = [
     path('produit/<slug:slug>/', views.product_detail, name='product_detail'),
     path('panier/', views.cart_detail, name='cart_detail'),
     path('panier/ajouter/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
-    path('panier/supprimer/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('panier/supprimer/<str:item_key>/', views.remove_from_cart, name='remove_from_cart'),
+    path('panier/modifier/<str:item_key>/', views.update_cart_quantity, name='update_cart_quantity'),
 
     path('commande/', views.checkout, name='checkout'),
     path('commande/merci/<str:reference>/', views.order_success, name='order_success'),

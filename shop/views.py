@@ -74,7 +74,7 @@ from django.http import JsonResponse
 
 
 
-from .models import Product, Category, Order, OrderItem, NewsletterSubscriber, SiteVisit
+from .models import Product, ProductVariant, Category, Order, OrderItem, NewsletterSubscriber, SiteVisit
 from .services import authorize_order, create_order_from_cart, mark_order_paid, remember_order
 
 
@@ -389,7 +389,9 @@ def product_detail(request, slug):
 
 
 
-    product = get_object_or_404(Product, slug=slug)
+    product = get_object_or_404(
+        Product.objects.select_related("category").prefetch_related("variants"), slug=slug
+    )
 
 
 
@@ -398,6 +400,13 @@ def product_detail(request, slug):
 
 
     categories = Category.objects.all()
+    variants = [variant for variant in product.variants.all() if variant.is_active]
+    related_products = (
+        Product.objects.select_related("category")
+        .filter(category=product.category)
+        .exclude(pk=product.pk)
+        .order_by("-is_featured", "title")[:4]
+    )
 
 
 
@@ -422,6 +431,10 @@ def product_detail(request, slug):
 
 
         "categories": categories,
+
+        "variants": variants,
+
+        "related_products": related_products,
 
 
 
@@ -3237,5 +3250,189 @@ def contact(request):
         "client_email": client_email,
         "client_phone": client_phone,
         "form_data": form_data,
+    })
+
+
+# Cart v2: cart entries are keyed by product id, or "product_id:variant_id" for a model.
+# Keeping the product id in every entry makes the session resilient to the old cart format.
+def _cart_product_id(item_key, item):
+    try:
+        return int(item.get("product_id") or str(item_key).split(":", 1)[0])
+    except (AttributeError, TypeError, ValueError):
+        return None
+
+
+def _cart_variant_id(item):
+    try:
+        value = item.get("variant_id")
+        return int(value) if value not in (None, "") else None
+    except (AttributeError, TypeError, ValueError):
+        return None
+
+
+def _cart_items_from_session(session):
+    """Refresh session data from the catalogue and remove stale/malformed entries."""
+    cart = _get_cart(session)
+    product_ids = {
+        product_id for key, item in cart.items()
+        if isinstance(item, dict) and (product_id := _cart_product_id(key, item))
+    }
+    products = Product.objects.select_related("category").in_bulk(product_ids)
+    variant_ids = {
+        variant_id for item in cart.values() if isinstance(item, dict)
+        if (variant_id := _cart_variant_id(item))
+    }
+    variants = ProductVariant.objects.filter(pk__in=variant_ids, is_active=True).select_related("product").in_bulk(variant_ids)
+
+    items, cleaned_cart, total = [], {}, Decimal("0.00")
+    for item_key, raw_item in list(cart.items()):
+        if not isinstance(raw_item, dict):
+            continue
+        product_id = _cart_product_id(item_key, raw_item)
+        product = products.get(product_id)
+        if not product:
+            continue
+
+        variant = variants.get(_cart_variant_id(raw_item))
+        if variant and variant.product_id != product.pk:
+            continue
+        try:
+            quantity = max(1, int(raw_item.get("quantity", 1)))
+        except (TypeError, ValueError):
+            quantity = 1
+
+        stock = variant.stock if variant else product.stock
+        if stock < 1:
+            continue
+        quantity = min(quantity, stock)
+        price = (variant.price if variant else product.price).quantize(Decimal("0.01"))
+        canonical_key = f"{product.pk}:{variant.pk}" if variant else str(product.pk)
+        # If an old duplicated entry exists, merge it rather than silently losing it.
+        if canonical_key in cleaned_cart:
+            quantity = min(stock, cleaned_cart[canonical_key]["quantity"] + quantity)
+        image = variant.image.url if variant and variant.image else (product.image.url if product.image else "")
+        entry = {
+            "product_id": product.pk,
+            "variant_id": variant.pk if variant else None,
+            "variant_name": variant.name if variant else "",
+            "title": product.title,
+            "price": str(price),
+            "quantity": quantity,
+            "image": image,
+        }
+        cleaned_cart[canonical_key] = entry
+
+    for item_key, item in cleaned_cart.items():
+        price = Decimal(item["price"])
+        line_total = (price * item["quantity"]).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        total += line_total
+        items.append({**item, "item_key": item_key, "line_total": line_total})
+
+    if cart != cleaned_cart:
+        session["cart"] = cleaned_cart
+        session.modified = True
+    return items, total
+
+
+def add_to_cart(request, product_id):
+    product = get_object_or_404(Product.objects.prefetch_related("variants"), id=product_id)
+    if request.method != "POST":
+        return redirect("shop:product_detail", slug=product.slug)
+
+    variants = [variant for variant in product.variants.all() if variant.is_active]
+    selected_variant = None
+    if variants:
+        try:
+            selected_variant = next(
+                variant for variant in variants if variant.pk == int(request.POST.get("variant_id", ""))
+            )
+        except (StopIteration, TypeError, ValueError):
+            messages.error(request, "Choisissez un modèle avant de l’ajouter au panier.")
+            return redirect("shop:product_detail", slug=product.slug)
+
+    stock = selected_variant.stock if selected_variant else product.stock
+    if stock < 1:
+        messages.error(request, "Ce produit est actuellement en rupture de stock.")
+        return redirect("shop:product_detail", slug=product.slug)
+    try:
+        quantity = max(1, int(request.POST.get("quantity", 1)))
+    except (TypeError, ValueError):
+        quantity = 1
+
+    cart = _get_cart(request.session)
+    item_key = f"{product.pk}:{selected_variant.pk}" if selected_variant else str(product.pk)
+    current_quantity = int(cart.get(item_key, {}).get("quantity", 0) or 0)
+    quantity = min(stock, current_quantity + quantity)
+    price = selected_variant.price if selected_variant else product.price
+    cart[item_key] = {
+        "product_id": product.pk,
+        "variant_id": selected_variant.pk if selected_variant else None,
+        "variant_name": selected_variant.name if selected_variant else "",
+        "title": product.title,
+        "price": str(price.quantize(Decimal("0.01"))),
+        "quantity": quantity,
+        "image": (
+            selected_variant.image.url if selected_variant and selected_variant.image
+            else (product.image.url if product.image else "")
+        ),
+    }
+    request.session.modified = True
+    label = f"{product.title} — {selected_variant.name}" if selected_variant else product.title
+    messages.success(request, f"{label} a été ajouté au panier.")
+    return redirect(request.POST.get("next") or "shop:cart_detail")
+
+
+@require_POST
+def update_cart_quantity(request, item_key):
+    items, _ = _cart_items_from_session(request.session)
+    item = next((entry for entry in items if entry["item_key"] == item_key), None)
+    if not item:
+        messages.info(request, "Cet article n’est plus dans votre panier.")
+        return redirect("shop:cart_detail")
+    try:
+        quantity = int(request.POST.get("quantity", 1))
+    except (TypeError, ValueError):
+        quantity = 1
+    if quantity <= 0:
+        request.session["cart"].pop(item_key, None)
+        messages.success(request, "Article retiré du panier.")
+    else:
+        product = Product.objects.filter(pk=item["product_id"]).first()
+        variant = ProductVariant.objects.filter(pk=item["variant_id"], product=product, is_active=True).first() if item["variant_id"] else None
+        stock = variant.stock if variant else (product.stock if product else 0)
+        if stock < 1:
+            request.session["cart"].pop(item_key, None)
+            messages.info(request, "Cet article n’est plus disponible et a été retiré du panier.")
+        else:
+            request.session["cart"][item_key]["quantity"] = min(quantity, stock)
+            messages.success(request, "Quantité mise à jour.")
+    request.session.modified = True
+    return redirect("shop:cart_detail")
+
+
+@require_POST
+def remove_from_cart(request, item_key):
+    cart = _get_cart(request.session)
+    if cart.pop(str(item_key), None) is not None:
+        request.session.modified = True
+        messages.success(request, "Article retiré du panier.")
+    return redirect("shop:cart_detail")
+
+
+def cart_detail(request):
+    items, total = _cart_items_from_session(request.session)
+    cart_product_ids = [item["product_id"] for item in items]
+    category_ids = Product.objects.filter(pk__in=cart_product_ids).values_list("category_id", flat=True)
+    related_products = (
+        Product.objects.select_related("category")
+        .filter(Q(category_id__in=category_ids) | Q(is_featured=True))
+        .exclude(pk__in=cart_product_ids)
+        .order_by("-is_featured", "title")
+        .distinct()[:4]
+    )
+    return render(request, "shop/cart_detail.html", {
+        "items": items,
+        "total": total,
+        "related_products": related_products,
     })
 

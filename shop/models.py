@@ -59,6 +59,31 @@ class Product(models.Model):
         return reverse("shop:product_detail", args=[self.slug])
 
 
+class ProductVariant(models.Model):
+    """A purchasable version of a product (colour, size, fragrance, edition…)."""
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="variants")
+    name = models.CharField(max_length=120, help_text="Ex. Noir / 100 ml / Édition limitée")
+    sku = models.CharField(max_length=80, blank=True)
+    price_adjustment = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
+    stock = models.PositiveIntegerField(default=0)
+    image = models.ImageField(upload_to="categories/variants/", blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("name",)
+        constraints = [
+            models.UniqueConstraint(fields=("product", "name"), name="unique_product_variant_name"),
+        ]
+
+    def __str__(self):
+        return f"{self.product.title} — {self.name}"
+
+    @property
+    def price(self):
+        return self.product.price + self.price_adjustment
+
+
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     email = models.EmailField()
@@ -119,6 +144,10 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
     product = models.ForeignKey("Product", on_delete=models.PROTECT)
+    variant = models.ForeignKey(
+        "ProductVariant", on_delete=models.SET_NULL, null=True, blank=True, related_name="order_items"
+    )
+    variant_label = models.CharField(max_length=120, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
 

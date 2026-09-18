@@ -1,52 +1,90 @@
 {% extends "core/base.html" %}
+{% load static %}
 {% block title %}Mon panier - Kinoush Store{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
 {% block content %}
-<div class="space-y-8 rounded-[2rem] border border-white/10 bg-slate-950/80 p-8 shadow-glow">
-  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+<section class="rounded-[2rem] border border-white/10 bg-slate-950/80 p-6 shadow-glow sm:p-8">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
     <div>
-      <p class="text-xs uppercase tracking-[0.35em] text-accent">Étape 1</p>
-      <h1 class="text-4xl font-display font-semibold text-white">Mon panier</h1>
+      <p class="text-xs uppercase tracking-[0.35em] text-accent">Votre sélection</p>
+      <h1 class="mt-2 text-4xl font-display font-semibold text-white">Mon panier</h1>
+      {% if items %}<p class="mt-2 text-sm text-slate-400">{{ items|length }} article{{ items|length|pluralize }} sélectionné{{ items|length|pluralize }}.</p>{% endif %}
     </div>
-    <a href="{% url 'shop:product_list' %}" class="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm uppercase tracking-[0.25em] text-white transition hover:border-accent hover:text-accent">Continuer mes achats</a>
+    <a href="{% url 'shop:product_list' %}" class="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-accent hover:text-accent">Continuer mes achats</a>
   </div>
+
   {% if items %}
-  <div class="overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/90">
-    <div class="grid min-w-full grid-cols-1 gap-6 p-6 md:grid-cols-[1.6fr_0.8fr_0.6fr_0.6fr_0.4fr] text-slate-400 text-xs uppercase tracking-[0.25em]">
-      <span>Produit</span><span class="hidden md:block">Quantité</span><span class="text-right">Prix</span><span class="text-right">Total</span><span></span>
-    </div>
-    <div class="divide-y divide-white/5">
-      {% for item in items %}
-      <div class="grid min-w-full items-center gap-6 px-6 py-4 md:grid-cols-[1.6fr_0.8fr_0.6fr_0.6fr_0.4fr]">
-        <div class="flex items-center gap-4">
-          {% if item.image %}
-          <img src="{{ item.image }}" alt="{{ item.title }}" class="h-16 w-16 rounded-3xl object-cover" loading="lazy" decoding="async">
-          {% endif %}
-          <div>
-            <p class="text-base font-semibold text-white">{{ item.title }}</p>
-          </div>
-        </div>
-        <div class="hidden text-sm md:block">{{ item.quantity }}</div>
-        <div class="text-right text-sm text-slate-300">{{ item.price }} $</div>
-        <div class="text-right text-sm text-slate-100">{{ item.total }} $</div>
-        <div class="text-right">
-          <a href="{% url 'shop:remove_from_cart' item.product_id %}" class="text-sm text-slate-400 transition hover:text-accent">Supprimer</a>
-        </div>
+  <div class="mt-8 space-y-4">
+    {% for item in items %}
+    <article class="flex flex-col gap-5 rounded-[1.5rem] border border-white/10 bg-black/30 p-4 sm:flex-row sm:items-center sm:p-5">
+      {% if item.image %}
+      <img src="{{ item.image }}" alt="{{ item.title }}" class="h-24 w-24 shrink-0 rounded-2xl object-cover" loading="lazy" decoding="async">
+      {% else %}
+      <div class="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-white/5 text-xs text-slate-500">Kinoush</div>
+      {% endif %}
+      <div class="min-w-0 flex-1">
+        <p class="text-lg font-semibold text-white">{{ item.title }}</p>
+        {% if item.variant_name %}<p class="mt-1 text-sm text-accent">Modèle : {{ item.variant_name }}</p>{% endif %}
+        <p class="mt-2 text-sm text-slate-400">{{ item.price }} $ / unité</p>
       </div>
-      {% endfor %}
-    </div>
+      <form method="post" action="{% url 'shop:update_cart_quantity' item.item_key %}" class="flex items-center gap-2" aria-label="Modifier la quantité de {{ item.title }}">
+        {% csrf_token %}
+        <label for="quantity-{{ forloop.counter }}" class="sr-only">Quantité</label>
+        <input id="quantity-{{ forloop.counter }}" type="number" name="quantity" value="{{ item.quantity }}" min="0" class="w-16 rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-center text-sm text-white outline-none transition focus:border-accent">
+        <button type="submit" class="rounded-xl border border-white/10 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-accent hover:text-accent">Mettre à jour</button>
+      </form>
+      <div class="text-left sm:text-right">
+        <p class="text-lg font-semibold text-white">{{ item.line_total }} $</p>
+        <form method="post" action="{% url 'shop:remove_from_cart' item.item_key %}" class="mt-2">
+          {% csrf_token %}
+          <button type="submit" class="text-sm text-slate-400 transition hover:text-accent">Supprimer</button>
+        </form>
+      </div>
+    </article>
+    {% endfor %}
   </div>
-  <div class="flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-slate-950/80 p-6 text-slate-300 sm:flex-row sm:items-center sm:justify-between">
-    <p class="text-sm">Total du panier : <span class="font-semibold text-white">{{ total_price }} $</span></p>
-    <a href="{% url 'shop:checkout' %}" class="inline-flex items-center justify-center rounded-full bg-accent px-7 py-4 text-sm font-semibold uppercase tracking-[0.25em] text-black transition hover:bg-accentDark">Passer à la commande</a>
+
+  <div class="mt-8 flex flex-col gap-5 rounded-[1.5rem] border border-accent/30 bg-[radial-gradient(circle_at_top_left,_rgba(255,79,184,0.14),_transparent_45%),_rgba(2,6,23,0.9)] p-6 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <p class="text-sm text-slate-300">Sous-total</p>
+      <p class="mt-1 text-3xl font-display font-semibold text-white">{{ total }} $</p>
+      <p class="mt-2 text-xs text-slate-400">Les frais de livraison sont calculés à l’étape suivante.</p>
+    </div>
+    <a href="{% url 'shop:checkout' %}" class="inline-flex items-center justify-center rounded-full bg-accent px-7 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-black transition hover:bg-accentDark hover:text-white">Passer la commande</a>
   </div>
   {% else %}
-  <div class="rounded-[2rem] border border-white/10 bg-slate-950/80 p-12 text-center">
+  <div class="mt-8 rounded-[1.5rem] border border-dashed border-white/15 bg-black/30 p-12 text-center">
     <p class="text-sm uppercase tracking-[0.35em] text-accent">Panier vide</p>
-    <h2 class="mt-4 text-3xl font-semibold text-white">Votre panier est encore vide.</h2>
-    <p class="mt-3 text-slate-300">Commencez par explorer nos collections premium.</p>
-    <a href="{% url 'shop:product_list' %}" class="mt-6 inline-flex items-center justify-center rounded-full bg-accent px-8 py-4 text-sm font-semibold uppercase tracking-[0.25em] text-black transition hover:bg-accentDark">Voir la boutique</a>
+    <h2 class="mt-4 text-3xl font-display font-semibold text-white">Votre sélection vous attend.</h2>
+    <p class="mx-auto mt-3 max-w-md text-slate-300">Explorez nos collections et ajoutez vos coups de cœur en quelques secondes.</p>
+    <a href="{% url 'shop:product_list' %}" class="mt-7 inline-flex items-center justify-center rounded-full bg-accent px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-black transition hover:bg-accentDark hover:text-white">Voir la boutique</a>
   </div>
   {% endif %}
-</div>
+</section>
+
+{% if related_products %}
+<section class="mt-16">
+  <div class="flex items-end justify-between gap-6">
+    <div>
+      <p class="text-xs uppercase tracking-[0.35em] text-accent">Complétez votre look</p>
+      <h2 class="mt-3 text-3xl font-display font-semibold text-white">Produits qui pourraient vous plaire</h2>
+    </div>
+    <a href="{% url 'shop:product_list' %}" class="hidden text-sm text-slate-300 transition hover:text-accent sm:block">Voir le catalogue →</a>
+  </div>
+  <div class="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    {% for product in related_products %}
+    <article class="group overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-950/80 transition hover:-translate-y-1 hover:border-accent">
+      <a href="{% url 'shop:product_detail' product.slug %}" class="block">
+        {% if product.image %}<img src="{{ product.image.url }}" alt="{{ product.title }}" class="h-52 w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">{% else %}<div class="h-52 bg-white/5"></div>{% endif %}
+      </a>
+      <div class="p-5">
+        <p class="text-xs uppercase tracking-[0.2em] text-slate-400">{{ product.category.name }}</p>
+        <h3 class="mt-2 font-semibold text-white"><a href="{% url 'shop:product_detail' product.slug %}" class="hover:text-accent">{{ product.title }}</a></h3>
+        <p class="mt-3 font-semibold text-accent">À partir de {{ product.price }} $</p>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
 {% endblock %}
