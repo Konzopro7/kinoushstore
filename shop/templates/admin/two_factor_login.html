@@ -1,0 +1,12 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<div id="content-main">
+  <form method="post" id="login-form">{% csrf_token %}
+    {% if form.errors %}<p class="errornote">Identifiants invalides ou accès non autorisé.</p>{% endif %}
+    <div class="form-row"><label for="id_username">Identifiant :</label>{{ form.username }}</div>
+    <div class="form-row"><label for="id_password">Mot de passe :</label>{{ form.password }}</div>
+    <div class="submit-row"><input type="submit" value="Continuer vers la vérification" /></div>
+  </form>
+  <p class="help">L’accès administrateur est protégé par un code d’authentification à deux facteurs.</p>
+</div>
+{% endblock %}

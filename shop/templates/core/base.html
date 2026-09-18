@@ -64,7 +64,6 @@
         <a href="{% url 'shop:contact' %}" class="text-sm uppercase tracking-[0.25em] text-slate-200 transition hover:text-accent">Contact</a>
       </div>
       <div class="flex items-center gap-3">
-        {% if request.user.is_authenticated %}<a href="{% url 'account' %}" class="hidden px-3 py-2 text-sm text-slate-300 transition hover:text-white sm:inline-flex">Mon compte</a>{% else %}<a href="{% url 'login' %}" class="hidden px-3 py-2 text-sm text-slate-300 transition hover:text-white sm:inline-flex">Connexion</a>{% endif %}
         <a href="{% url 'shop:cart_detail' %}" class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:border-accent hover:bg-white/10">Panier{% if cart_item_count %} <span class="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-accent px-1.5 py-0.5 text-xs font-bold text-black">{{ cart_item_count }}</span>{% endif %}</a>
         <button id="menu-toggle" type="button" aria-label="Ouvrir le menu" aria-controls="mobile-menu" aria-expanded="false" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition hover:border-accent hover:bg-white/10 md:hidden">
           <span class="text-lg">☰</span>
@@ -78,7 +77,6 @@
         <a href="{% url 'shop:about' %}" class="rounded-3xl px-4 py-3 text-sm uppercase tracking-[0.25em] text-slate-200 transition hover:bg-white/5 hover:text-accent">À propos</a>
         <a href="{% url 'shop:faq' %}" class="rounded-3xl px-4 py-3 text-sm uppercase tracking-[0.25em] text-slate-200 transition hover:bg-white/5 hover:text-accent">FAQ</a>
         <a href="{% url 'shop:contact' %}" class="rounded-3xl px-4 py-3 text-sm uppercase tracking-[0.25em] text-slate-200 transition hover:bg-white/5 hover:text-accent">Contact</a>
-        {% if request.user.is_authenticated %}<a href="{% url 'account' %}" class="rounded-3xl px-4 py-3 text-sm uppercase tracking-[0.25em] text-slate-200 transition hover:bg-white/5 hover:text-accent">Mon compte</a>{% else %}<a href="{% url 'login' %}" class="rounded-3xl px-4 py-3 text-sm uppercase tracking-[0.25em] text-slate-200 transition hover:bg-white/5 hover:text-accent">Connexion</a>{% endif %}
       </div>
     </div>
   </div>

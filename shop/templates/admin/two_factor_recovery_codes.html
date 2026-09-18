@@ -1,0 +1,9 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<div id="content-main">
+  <h1>Enregistrez vos codes de récupération</h1>
+  <p>Gardez ces codes dans un gestionnaire de mots de passe. Chaque code ne fonctionne qu’une seule fois.</p>
+  <ul>{% for code in codes %}<li><code style="font-size:1.1em">{{ code }}</code></li>{% endfor %}</ul>
+  <form method="post">{% csrf_token %}<div class="submit-row"><input type="submit" value="J’ai enregistré mes codes - accéder à l’administration" /></div></form>
+</div>
+{% endblock %}

@@ -31,7 +31,7 @@ input,textarea,select { border-color:rgba(130,86,65,.25)!important; }
 .site-header { background:rgba(239,233,228,.9)!important; border-color:rgba(130,86,65,.18)!important; }
 .site-header a { color:var(--ink)!important; }
 .brand-lockup { color:var(--brown)!important; min-width:max-content; }
-.brand-logo { height:3.9rem; width:auto; }
+.brand-logo { height:5.5rem; width:auto; }
 .brand-mark { align-items:center; background:var(--brown); border-radius:50%; color:var(--cream); display:inline-flex; font-family:"Cormorant Garamond",serif; font-size:2.25rem; font-weight:700; height:3.25rem; justify-content:center; line-height:1; width:3.25rem; }
 .brand-name { color:var(--brown); font-family:"Agada","Cormorant Garamond",serif; font-size:1.8rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
 .brand-subtitle { color:var(--muted); font-size:.56rem; font-weight:700; letter-spacing:.17em; margin-top:.1rem; text-transform:uppercase; }
@@ -47,4 +47,11 @@ input,textarea,select { border-color:rgba(130,86,65,.25)!important; }
 .brand-hero .text-accent { color:#f5d8c5!important; }
 .brand-note { border-left:3px solid var(--gold); }
 button:hover,a.button-link:hover { transform:translateY(-2px); }
-@media (max-width:767px) { .brand-logo { height:3.25rem; } .brand-name { font-size:1.45rem; } .brand-mark { height:2.7rem; width:2.7rem; font-size:1.85rem; } }
+.faq-item { background:#fff; border:1px solid rgba(130,86,65,.18); border-radius:1.25rem; box-shadow:0 10px 28px rgba(130,86,65,.07); overflow:hidden; }
+.faq-item summary { align-items:center; color:var(--ink); cursor:pointer; display:flex; font-family:"Agada","Cormorant Garamond",serif; font-size:1.45rem; font-weight:600; justify-content:space-between; list-style:none; padding:1.35rem 1.5rem; }
+.faq-item summary::-webkit-details-marker { display:none; }
+.faq-item summary span { align-items:center; background:var(--cream); border-radius:50%; color:var(--brown); display:inline-flex; flex:0 0 auto; font-family:Lato,sans-serif; font-size:1.4rem; height:2rem; justify-content:center; transition:transform .2s ease; width:2rem; }
+.faq-item[open] summary { color:var(--brown); }
+.faq-item[open] summary span { transform:rotate(45deg); }
+.faq-answer { border-top:1px solid rgba(130,86,65,.14); color:#4d3a32; line-height:1.75; padding:0 1.5rem 1.4rem; }
+@media (max-width:767px) { .brand-logo { height:4.25rem; } .brand-name { font-size:1.45rem; } .brand-mark { height:2.7rem; width:2.7rem; font-size:1.85rem; } }

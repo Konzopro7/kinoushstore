@@ -177,19 +177,32 @@ class CheckoutSecurityTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
 
-class AccountTests(TestCase):
-    def test_signup_creates_and_logs_in_user(self):
-        response = self.client.post(reverse("signup"), {
-            "username": "cliente", "email": "cliente@example.com",
-            "password1": "UnMotDePasse!938", "password2": "UnMotDePasse!938",
-        })
-        self.assertRedirects(response, reverse("account"))
-        self.assertTrue(User.objects.filter(username="cliente").exists())
-        self.assertIn("_auth_user_id", self.client.session)
+class AdminTwoFactorTests(TestCase):
+    def setUp(self):
+        self.admin = User.objects.create_superuser("admin", "admin@example.com", "Admin!Password938")
 
-    def test_account_requires_login(self):
-        response = self.client.get(reverse("account"))
-        self.assertRedirects(response, f"{reverse('login')}?next={reverse('account')}")
+    def test_admin_requires_totp_enrollment_before_login(self):
+        response = self.client.post("/admin/login/", {"username": "admin", "password": "Admin!Password938"})
+        self.assertRedirects(response, reverse("admin_2fa_setup"))
+
+        from .admin_2fa import _decrypt, _totp
+        from .models import AdminTwoFactorDevice
+
+        device = AdminTwoFactorDevice.objects.get(user=self.admin)
+        response = self.client.post(reverse("admin_2fa_setup"), {"code": _totp(_decrypt(device.encrypted_secret))})
+        self.assertRedirects(response, reverse("admin_2fa_recovery_codes"))
+        response = self.client.post(reverse("admin_2fa_recovery_codes"))
+        self.assertRedirects(response, reverse("admin:index"))
+        self.assertEqual(int(self.client.session["_auth_user_id"]), self.admin.pk)
+
+    def test_admin_session_without_totp_marker_is_denied(self):
+        self.client.force_login(self.admin)
+        response = self.client.get(reverse("admin:index"))
+        self.assertRedirects(response, "/admin/login/?next=/admin/")
+
+    def test_public_customer_login_routes_are_not_exposed(self):
+        self.assertEqual(self.client.get("/connexion/").status_code, 404)
+        self.assertEqual(self.client.get("/inscription/").status_code, 404)
 
 
 @override_settings(

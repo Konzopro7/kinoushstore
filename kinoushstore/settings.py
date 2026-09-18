@@ -55,6 +55,12 @@ CSRF_TRUSTED_ORIGINS = [
     o.strip() for o in os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()
 ]
 
+# Safe defaults in every environment; production additionally enables Secure cookies below.
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+SECURE_REFERRER_POLICY = "same-origin"
+
 
 # Application definition
 
@@ -219,9 +225,7 @@ if not DEBUG:
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'shop:home'
-LOGOUT_REDIRECT_URL = 'shop:home'
+LOGIN_URL = '/admin/login/'
 
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")

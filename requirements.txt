@@ -10,3 +10,4 @@ tzdata==2025.2
 cloudinary
 django-cloudinary-storage
 gunicorn==22.0.0
+cryptography==50.0.1

@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
@@ -184,3 +185,35 @@ class NewsletterSubscriber(models.Model):
 
     def __str__(self):
         return self.email
+
+
+class AdminTwoFactorDevice(models.Model):
+    """Encrypted TOTP credential required for every Django admin account."""
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="admin_2fa")
+    encrypted_secret = models.TextField(blank=True)
+    is_confirmed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    confirmed_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"2FA admin - {self.user.get_username()}"
+
+
+class AdminTwoFactorRecoveryCode(models.Model):
+    device = models.ForeignKey(AdminTwoFactorDevice, on_delete=models.CASCADE, related_name="recovery_codes")
+    code_hash = models.CharField(max_length=128)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class AdminLoginAttempt(models.Model):
+    username = models.CharField(max_length=150)
+    ip_address = models.GenericIPAddressField()
+    failures = models.PositiveSmallIntegerField(default=0)
+    locked_until = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=("username", "ip_address"), name="unique_admin_login_attempt"),
+        ]
