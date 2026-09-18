@@ -1,63 +1,50 @@
-/* Design system Kinoush Store */
-:root {
-  color-scheme: dark;
-  font-family: 'Manrope', Arial, sans-serif;
-  --bg: #000000;
-  --surface: #F9F9F9;
-  --accent: #FF00FF;
-  --accent-soft: #F9D6FF;
-  --accent-dark: #C300C3;
-  --panel: #121212;
-  --text: #F8FAFC;
-  --muted: #94A3B8;
-}
-* {
-  box-sizing: border-box;
-}
-html {
-  scroll-behavior: smooth;
-}
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: radial-gradient(circle at top, rgba(255,0,255,0.1), transparent 25%), #000000;
-  color: var(--text);
-}
-a {
-  color: inherit;
-}
-button, input, textarea, select {
-  font: inherit;
-}
-img {
-  display: block;
-  max-width: 100%;
-}
-::selection {
-  background: var(--accent);
-  color: #000;
-}
-.hidden { display: none; }
-.rounded-full { border-radius: 9999px; }
-.shadow-glow { box-shadow: 0 35px 120px rgba(255,0,255,0.14); }
-.backdrop-blur-xl { backdrop-filter: blur(20px); }
-.bg-gradient-hero {
-  background: radial-gradient(circle at center, rgba(255,0,255,0.18), transparent 45%), linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.95));
-}
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-input, textarea, select {
-  border: 1px solid rgba(255,255,255,0.12);
-}
-button, a.button-link {
-  transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease;
-}
-button:hover, a.button-link:hover {
-  transform: translateY(-2px);
-}
-@media (max-width: 768px) {
-  .lg\:grid-cols-[1fr_0.95fr] { grid-template-columns: 1fr; }
-}
+/* Kinoush Store - identité 2026 : Fashion & Beauty */
+:root { color-scheme: light; --cream:#EFE9E4; --brown:#825641; --wine:#570301; --ink:#251b17; --muted:#65635C; --blush:#F7A3B1; --gold:#FF9A00; --plum:#713274; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin:0; min-height:100vh; background:var(--cream)!important; color:var(--ink)!important; font-family:Lato,Arial,sans-serif!important; }
+h1,h2,h3,.font-display { font-family:"Agada","Cormorant Garamond",Georgia,serif!important; letter-spacing:-.02em; }
+a { color:inherit; }
+img { display:block; max-width:100%; }
+button,input,textarea,select { font:inherit; }
+input,textarea,select { border-color:rgba(130,86,65,.25)!important; }
+::selection { background:var(--brown); color:#fff; }
+
+/* Les utilitaires historiques deviennent la version claire de la charte. */
+.bg-black,.bg-black\/95,.bg-black\/70,.bg-black\/40,.bg-black\/30 { background-color:var(--cream)!important; }
+.bg-slate-950,.bg-slate-950\/90,.bg-slate-950\/85,.bg-slate-950\/80,.bg-slate-950\/75,.bg-slate-950\/70 { background-color:rgba(255,255,255,.82)!important; }
+.bg-white\/5 { background-color:rgba(130,86,65,.06)!important; }
+.bg-white\/10 { background-color:rgba(130,86,65,.1)!important; }
+.border-white\/10,.border-white\/15 { border-color:rgba(130,86,65,.19)!important; }
+.divide-white\/5 > :not([hidden]) ~ :not([hidden]) { border-color:rgba(130,86,65,.12)!important; }
+.text-white,.text-slate-100 { color:var(--ink)!important; }
+.text-slate-200,.text-slate-300 { color:#4d3a32!important; }
+.text-slate-400,.text-slate-500 { color:var(--muted)!important; }
+.text-black { color:#fff!important; }
+.text-accent { color:var(--brown)!important; }
+.bg-accent { background-color:var(--brown)!important; }
+.hover\:bg-accentDark:hover { background-color:var(--wine)!important; }
+.hover\:text-accent:hover { color:var(--wine)!important; }
+.hover\:border-accent:hover,.focus\:border-accent:focus { border-color:var(--brown)!important; }
+.shadow-glow { box-shadow:0 22px 65px rgba(130,86,65,.13)!important; }
+
+.site-header { background:rgba(239,233,228,.9)!important; border-color:rgba(130,86,65,.18)!important; }
+.site-header a { color:var(--ink)!important; }
+.brand-lockup { color:var(--brown)!important; min-width:max-content; }
+.brand-logo { height:3.9rem; width:auto; }
+.brand-mark { align-items:center; background:var(--brown); border-radius:50%; color:var(--cream); display:inline-flex; font-family:"Cormorant Garamond",serif; font-size:2.25rem; font-weight:700; height:3.25rem; justify-content:center; line-height:1; width:3.25rem; }
+.brand-name { color:var(--brown); font-family:"Agada","Cormorant Garamond",serif; font-size:1.8rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+.brand-subtitle { color:var(--muted); font-size:.56rem; font-weight:700; letter-spacing:.17em; margin-top:.1rem; text-transform:uppercase; }
+.site-footer { background:#2c1f1a!important; border-color:rgba(255,255,255,.15)!important; }
+.site-footer,.site-footer .text-slate-400,.site-footer .text-slate-500 { color:#eee5df!important; }
+.site-footer .brand-name { color:#fff!important; }
+.site-footer a:hover { color:var(--blush)!important; }
+
+.brand-hero { background:linear-gradient(110deg,rgba(37,27,23,.82),rgba(37,27,23,.38)),url('../img/hero.jpg') center/cover; }
+.brand-hero::after { background:linear-gradient(90deg,rgba(130,86,65,.35),transparent 55%); content:""; inset:0; pointer-events:none; position:absolute; }
+.brand-hero > * { position:relative; z-index:1; }
+.brand-hero .text-white,.brand-hero .text-slate-200 { color:#fff!important; }
+.brand-hero .text-accent { color:#f5d8c5!important; }
+.brand-note { border-left:3px solid var(--gold); }
+button:hover,a.button-link:hover { transform:translateY(-2px); }
+@media (max-width:767px) { .brand-logo { height:3.25rem; } .brand-name { font-size:1.45rem; } .brand-mark { height:2.7rem; width:2.7rem; font-size:1.85rem; } }

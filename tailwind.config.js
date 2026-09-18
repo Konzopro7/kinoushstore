@@ -4,19 +4,22 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        surface: "#f9f9f9",
-        accent: "#ff4fb8",
-        accentSoft: "#ffe1f3",
-        accentDark: "#c82682",
-        bg: "#070508",
-        panel: "#141116"
+        surface: "#FFFFFF",
+        accent: "#825641",
+        accentSoft: "#F7A3B1",
+        accentDark: "#570301",
+        bg: "#EFE9E4",
+        panel: "#FFFFFF",
+        plum: "#713274",
+        gold: "#FF9A00",
+        warmGray: "#65635C"
       },
       fontFamily: {
-        body: ["Manrope", "sans-serif"],
-        display: ["Playfair Display", "serif"]
+        body: ["Lato", "sans-serif"],
+        display: ["Agada", "Cormorant Garamond", "serif"]
       },
       boxShadow: {
-        glow: "0 24px 80px rgba(255, 79, 184, 0.16)"
+        glow: "0 24px 70px rgba(130, 86, 65, 0.15)"
       }
     }
   },

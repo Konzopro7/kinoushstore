@@ -21,7 +21,8 @@
   <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-default.svg' %}{% endblock %}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/logo-official.svg' %}">
   <link rel="icon" href="{% static 'img/favicon.ico' %}" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32.png' %}">
   <link rel="apple-touch-icon" href="{% static 'img/favicon-32.png' %}">
@@ -35,7 +36,7 @@
     "@type": "Organization",
     "name": "Kinoush Store",
     "url": "{{ base_url }}",
-    "logo": "{{ base_url }}{% static 'img/logo.png' %}"
+    "logo": "{{ base_url }}{% static 'img/logo-official.svg' %}"
   }
   </script>
   <script type="application/ld+json">
@@ -50,11 +51,10 @@
 </head>
 <body class="min-h-screen bg-black text-slate-100 antialiased selection:bg-accent selection:text-black">
   <a href="#main-content" class="sr-only z-[100] rounded-full bg-white px-5 py-3 text-black focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Aller au contenu</a>
-  <div class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/70 backdrop-blur-xl">
-    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-      <a href="{% url 'shop:home' %}" class="flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.35em] text-white">
-        <img src="{% static 'img/logo.png' %}" alt="Kinoush Store" class="h-10 w-auto rounded-xl border border-white/10 bg-white/5 p-2 shadow-glow">
-        <span class="text-white">Kinoush Store</span>
+  <div class="site-header fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/70 backdrop-blur-xl">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+      <a href="{% url 'shop:home' %}" class="brand-lockup flex items-center gap-3" aria-label="Kinoush Store - Accueil">
+        <img src="{% static 'img/logo-official.svg' %}" alt="Kinoush Store" class="brand-logo">
       </a>
       <div class="hidden items-center gap-8 md:flex">
         <a href="{% url 'shop:home' %}" class="text-sm uppercase tracking-[0.25em] text-slate-200 transition hover:text-accent">Accueil</a>
@@ -96,7 +96,7 @@
       {% block content %}{% endblock %}
     </div>
   </main>
-  <footer class="border-t border-white/10 bg-slate-950 py-10 text-slate-400">
+  <footer class="site-footer border-t border-white/10 bg-slate-950 py-10 text-slate-400">
     <div class="mx-auto flex max-w-7xl flex-col gap-6 px-4 sm:px-6 lg:px-8 lg:flex-row lg:items-center lg:justify-between">
       <div class="space-y-2">
         <p class="text-sm uppercase tracking-[0.3em] text-slate-500">Kinoush Store</p>

@@ -1,83 +1,35 @@
 {% extends "core/base.html" %}
 {% load static %}
-{% block title %}Accueil - Kinoush Store{% endblock %}
-{% block meta_description %}Boutique en ligne Kinoush Store : parfums, habits et accessoires. Découvrez nos nouveautés et collections du moment.{% endblock %}
-{% block og_title %}Accueil - Kinoush Store{% endblock %}
-{% block twitter_title %}Accueil - Kinoush Store{% endblock %}
-{% block og_description %}Boutique en ligne Kinoush Store : parfums, habits et accessoires. Découvrez nos nouveautés et collections du moment.{% endblock %}
-{% block twitter_description %}Boutique en ligne Kinoush Store : parfums, habits et accessoires. Découvrez nos nouveautés et collections du moment.{% endblock %}
+{% block title %}Kinoush Store - Fashion & Beauty{% endblock %}
+{% block meta_description %}Kinoush Store : mode, accessoires et beauté choisis avec soin pour révéler votre élégance naturelle.{% endblock %}
 {% block canonical_url %}{{ request.scheme }}://{{ request.get_host }}{% url 'shop:home' %}{% endblock %}
-{% block extra_head %}
-  <link rel="preload" as="image" href="{% static 'img/hero.jpg' %}">
-{% endblock %}
-{% block main_classes %}pt-24{% endblock %}
+{% block extra_head %}<link rel="preload" as="image" href="{% static 'img/hero.jpg' %}">{% endblock %}
+{% block main_classes %}pt-20{% endblock %}
 {% block content %}
-<section class="overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(255,0,255,0.16),_transparent_40%),_linear-gradient(180deg,_rgba(255,255,255,0.05),_rgba(0,0,0,0.8))] shadow-glow">
-  <div class="relative isolate overflow-hidden">
-    <img src="{% static 'img/hero.jpg' %}" alt="Sélection mode et parfums Kinoush Store" class="absolute inset-0 h-full w-full object-cover object-center opacity-40 sm:opacity-60">
-    <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/90"></div>
-    <div class="relative mx-auto flex min-h-[560px] max-w-6xl flex-col justify-end gap-10 px-6 py-16 text-center text-white sm:px-10 lg:px-16 lg:py-20 lg:text-left">
-      <div class="max-w-2xl">
-        <p class="mb-4 text-sm uppercase tracking-[0.35em] text-accent">Collection signature</p>
-        <h1 class="font-display text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">Luxe moderne pour chaque instant.</h1>
-        <p class="mt-6 max-w-xl text-base text-slate-200 sm:text-lg">Découvrez des parfums rares et des pièces d'habillement exclusives, présentées dans une ambiance noire intense et des reflets magenta.</p>
-      </div>
-      <div class="flex flex-col items-center justify-center gap-4 sm:flex-row sm:justify-start">
-        <a href="{% url 'shop:product_list' %}" class="inline-flex items-center justify-center rounded-full bg-accent px-8 py-3 text-sm font-semibold uppercase tracking-[0.25em] text-black shadow-glow transition hover:bg-accentDark hover:text-white">Découvrir la boutique</a>
-        <a href="{% url 'shop:about' %}" class="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-8 py-3 text-sm font-semibold uppercase tracking-[0.25em] text-white transition hover:border-accent hover:text-accent">Notre univers</a>
-      </div>
+<section class="brand-hero relative overflow-hidden rounded-b-[2.5rem] px-6 py-20 shadow-glow sm:px-10 lg:px-16 lg:py-28">
+  <div class="max-w-2xl">
+    <p class="text-xs font-bold uppercase tracking-[0.35em] text-accent">Kinoush Store · Fashion & Beauty</p>
+    <h1 class="mt-6 text-5xl font-semibold leading-[.95] text-white sm:text-6xl lg:text-7xl">Révélez votre<br>élégance naturelle.</h1>
+    <p class="mt-7 max-w-xl text-lg leading-8 text-slate-200">Des pièces mode, accessoires et essentiels beauté choisis pour sublimer ce qui vous ressemble.</p>
+    <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+      <a href="{% url 'shop:product_list' %}" class="inline-flex items-center justify-center rounded-full bg-accent px-7 py-4 text-sm font-bold uppercase tracking-[0.2em] text-black transition hover:bg-accentDark">Découvrir la boutique</a>
+      <a href="{% url 'shop:about' %}" class="inline-flex items-center justify-center rounded-full border border-white/40 bg-white/10 px-7 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white transition hover:bg-white/20">Notre histoire</a>
     </div>
   </div>
 </section>
-<section class="mt-16 space-y-8">
-  <div class="grid gap-6 lg:grid-cols-3">
-    <article class="rounded-[2rem] border border-white/10 bg-slate-950/75 p-8 shadow-glow backdrop-blur-xl">
-      <span class="text-xs uppercase tracking-[0.35em] text-accent">Immersif</span>
-      <h2 class="mt-4 text-3xl font-display font-semibold text-white">Une expérience exclusive</h2>
-      <p class="mt-4 text-sm leading-7 text-slate-300">Naviguez dans une sélection premium conçue pour attirer votre regard et sublimer votre style.</p>
-    </article>
-    <article class="rounded-[2rem] border border-white/10 bg-slate-950/75 p-8 shadow-glow backdrop-blur-xl">
-      <span class="text-xs uppercase tracking-[0.35em] text-accent">Collection</span>
-      <h2 class="mt-4 text-3xl font-display font-semibold text-white">Femme & Homme</h2>
-      <p class="mt-4 text-sm leading-7 text-slate-300">Découvrez des catégories triées pour un shopping élégant : parfums, vêtements et accessoires de prestige.</p>
-    </article>
-    <article class="rounded-[2rem] border border-white/10 bg-slate-950/75 p-8 shadow-glow backdrop-blur-xl">
-      <span class="text-xs uppercase tracking-[0.35em] text-accent">Rapide</span>
-      <h2 class="mt-4 text-3xl font-display font-semibold text-white">Tunnel de commande simplifié</h2>
-      <p class="mt-4 text-sm leading-7 text-slate-300">Panier, expédition et paiement expliqués en trois étapes fluides.</p>
-    </article>
-  </div>
+
+<section class="grid gap-5 py-14 md:grid-cols-3">
+  <article class="brand-note rounded-2xl bg-white p-6 shadow-glow"><p class="text-xs font-bold uppercase tracking-[.2em] text-accent">Sélection soignée</p><h2 class="mt-3 text-2xl font-semibold">Le détail qui fait la différence</h2><p class="mt-3 leading-7 text-slate-400">Des choix pensés avec goût, confort et personnalité.</p></article>
+  <article class="brand-note rounded-2xl bg-white p-6 shadow-glow"><p class="text-xs font-bold uppercase tracking-[.2em] text-accent">Proche de vous</p><h2 class="mt-3 text-2xl font-semibold">Un style qui vous ressemble</h2><p class="mt-3 leading-7 text-slate-400">Une expérience douce, simple et sincère, à chaque étape.</p></article>
+  <article class="brand-note rounded-2xl bg-white p-6 shadow-glow"><p class="text-xs font-bold uppercase tracking-[.2em] text-accent">Mode & beauté</p><h2 class="mt-3 text-2xl font-semibold">L’élégance au quotidien</h2><p class="mt-3 leading-7 text-slate-400">Des essentiels tendance pour femmes et hommes.</p></article>
 </section>
-<section class="mt-20">
-  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-    <div>
-      <p class="text-xs uppercase tracking-[0.35em] text-accent">Catégories</p>
-      <h2 class="mt-3 text-4xl font-display font-semibold text-white">Parfums, vêtements & accessoires</h2>
-    </div>
-    <a href="{% url 'shop:product_list' %}" class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold uppercase tracking-[0.25em] text-white transition hover:border-accent hover:text-accent">Voir tout le catalogue</a>
-  </div>
+
+<section class="pb-20">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><p class="text-xs font-bold uppercase tracking-[.3em] text-accent">Nos univers</p><h2 class="mt-3 text-4xl font-semibold">Choisissez ce qui vous inspire</h2></div><a href="{% url 'shop:product_list' %}" class="text-sm font-bold uppercase tracking-[.18em] text-accent hover:text-accentDark">Tout le catalogue →</a></div>
   <div class="mt-8 grid gap-6 md:grid-cols-3">
-    <a href="{% url 'shop:product_list_men' %}" class="group overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/80 p-6 transition hover:-translate-y-1 hover:border-accent hover:bg-slate-900/90">
-      <div class="mb-5 h-52 overflow-hidden rounded-[1.5rem] bg-white/5">
-        <img src="{% static 'img/hommes.jpg' %}" alt="Collection hommes" class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
-      </div>
-      <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Collection</p>
-      <h3 class="mt-4 text-2xl font-semibold text-white">Hommes</h3>
-    </a>
-    <a href="{% url 'shop:product_list_women' %}" class="group overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/80 p-6 transition hover:-translate-y-1 hover:border-accent hover:bg-slate-900/90">
-      <div class="mb-5 h-52 overflow-hidden rounded-[1.5rem] bg-white/5">
-        <img src="{% static 'img/femmes.jpg' %}" alt="Collection femmes" class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
-      </div>
-      <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Collection</p>
-      <h3 class="mt-4 text-2xl font-semibold text-white">Femmes</h3>
-    </a>
-    <a href="{% url 'shop:product_list' %}" class="group overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/80 p-6 transition hover:-translate-y-1 hover:border-accent hover:bg-slate-900/90">
-      <div class="mb-5 h-52 overflow-hidden rounded-[1.5rem] bg-white/5">
-        <img src="{% static 'img/parfums.jpg' %}" alt="Parfums et accessoires" class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
-      </div>
-      <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Collection</p>
-      <h3 class="mt-4 text-2xl font-semibold text-white">Parfums & accessoires</h3>
-    </a>
+    <a href="{% url 'shop:product_list_women' %}" class="group overflow-hidden rounded-[2rem] bg-white shadow-glow"><img src="{% static 'img/femmes.jpg' %}" alt="Collection femmes" class="h-72 w-full object-cover transition duration-700 group-hover:scale-105"><div class="p-6"><p class="text-xs uppercase tracking-[.25em] text-slate-400">Collection</p><h3 class="mt-2 text-3xl font-semibold">Femmes</h3></div></a>
+    <a href="{% url 'shop:product_list_men' %}" class="group overflow-hidden rounded-[2rem] bg-white shadow-glow"><img src="{% static 'img/hommes.jpg' %}" alt="Collection hommes" class="h-72 w-full object-cover transition duration-700 group-hover:scale-105"><div class="p-6"><p class="text-xs uppercase tracking-[.25em] text-slate-400">Collection</p><h3 class="mt-2 text-3xl font-semibold">Hommes</h3></div></a>
+    <a href="{% url 'shop:product_list' %}" class="group overflow-hidden rounded-[2rem] bg-white shadow-glow"><img src="{% static 'img/parfums.jpg' %}" alt="Beauté et accessoires" class="h-72 w-full object-cover transition duration-700 group-hover:scale-105"><div class="p-6"><p class="text-xs uppercase tracking-[.25em] text-slate-400">Collection</p><h3 class="mt-2 text-3xl font-semibold">Beauté & accessoires</h3></div></a>
   </div>
 </section>
 {% endblock %}
