@@ -189,6 +189,7 @@ class AdminTwoFactorTests(TestCase):
         from .models import AdminTwoFactorDevice
 
         device = AdminTwoFactorDevice.objects.get(user=self.admin)
+        self.assertContains(self.client.get(reverse("admin_2fa_setup")), "data:image/png;base64,")
         response = self.client.post(reverse("admin_2fa_setup"), {"code": _totp(_decrypt(device.encrypted_secret))})
         self.assertRedirects(response, reverse("admin_2fa_recovery_codes"))
         response = self.client.post(reverse("admin_2fa_recovery_codes"))

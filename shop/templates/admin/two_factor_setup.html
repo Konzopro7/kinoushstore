@@ -2,9 +2,9 @@
 {% block content %}
 <div id="content-main">
   <h1>Configurer l’authentification à deux facteurs</h1>
-  <p>Dans votre application d’authentification (Google Authenticator, Microsoft Authenticator ou Authy), ajoutez un compte TOTP avec :</p>
-  <p><strong>Compte :</strong> {{ account_name }}<br><strong>Clé secrète :</strong> <code style="font-size:1.1em;word-break:break-all">{{ secret }}</code><br><strong>Période :</strong> 30 secondes · <strong>Code :</strong> 6 chiffres</p>
-  <p class="help">Conservez cette clé privée. Ne la partagez avec personne.</p>
+  <p>Ouvrez Google Authenticator, Microsoft Authenticator ou Authy, puis scannez ce QR code :</p>
+  <p><img src="{{ qr_code }}" width="240" height="240" alt="QR code de configuration Kinoush Store" style="background:#fff;padding:10px"></p>
+  <p class="help">Compte : {{ account_name }} · Codes à 6 chiffres · Période de 30 secondes. La clé secrète est conservée par l’application et n’est pas affichée.</p>
   <form method="post">{% csrf_token %}<div class="form-row"><label for="id_code">Code de l’application :</label><input id="id_code" name="code" inputmode="numeric" pattern="[0-9]{6}" autocomplete="one-time-code" required></div><div class="submit-row"><input type="submit" value="Vérifier et activer" /></div></form>
 </div>
 {% endblock %}

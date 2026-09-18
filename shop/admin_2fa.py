@@ -2,12 +2,15 @@
 import base64
 import hashlib
 import hmac
+import io
 import secrets
 import struct
 import time
 from datetime import timedelta
+from urllib.parse import quote
 
 from cryptography.fernet import Fernet, InvalidToken
+import qrcode
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.forms import AdminAuthenticationForm
@@ -62,6 +65,16 @@ def _valid_totp(secret, code):
         return False
     current = int(time.time() // 30)
     return any(hmac.compare_digest(_totp(secret, current + offset), code) for offset in (-1, 0, 1))
+
+
+def _totp_qr_code(username, secret):
+    issuer = "Kinoush Store"
+    label = quote(f"{issuer}:{username}")
+    uri = f"otpauth://totp/{label}?secret={secret}&issuer={quote(issuer)}&algorithm=SHA1&digits=6&period=30"
+    image = qrcode.make(uri)
+    buffer = io.BytesIO()
+    image.save(buffer, format="PNG")
+    return "data:image/png;base64," + base64.b64encode(buffer.getvalue()).decode("ascii")
 
 
 def _client_ip(request):
@@ -161,6 +174,7 @@ def setup_totp(request):
     return render(request, "admin/two_factor_setup.html", {
         "secret": secret,
         "account_name": user.get_username(),
+        "qr_code": _totp_qr_code(user.get_username(), secret),
     })
 
 
