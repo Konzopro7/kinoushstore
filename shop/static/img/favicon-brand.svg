@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Kinoush Store">
+  <rect width="64" height="64" rx="16" fill="#EFE9E4"/>
+  <path d="M20 12h11v16l15-16h8L38 30l18 22H43L30 35v17H20z" fill="#825641"/>
+  <path d="M33 28c6-7 11-8 16-8-2 5-5 9-13 12 7 0 11 2 14 6-7 0-13-2-18-7z" fill="#F7A3B1"/>
+</svg>
